@@ -19,7 +19,7 @@
 
 <script>
 import {ElMessage} from "element-plus";
-
+import userApi from '../utils/api/user.js'
 export default {
   name: "LoginView",
   data() {
@@ -32,30 +32,15 @@ export default {
   },
   methods: {
     doLogin() {
-      const _this = this
-      fetch('http://localhost:9001/user/doLogin', {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(this.loginForm)
-      }).then(res => res.json())
-          .then(data => {
-            if (data.code === 0) {
-              ElMessage.success("登录成功～")
-              window.localStorage.setItem('token', data.data)
-              _this.$router.push('/dataSource')
-            } else {
-              ElMessage.error(data.msg)
-              window.localStorage.setItem('token', '')
+      userApi.doLogin(this.loginForm)
+          .then(res => {
+            if (res.code === 0) {
+              window.localStorage.setItem('token', res.data)
+              this.$router.push('/dataSource')
+              ElMessage.success('登录成功～')
             }
           })
-    }
+    },
   }
 }
 </script>

@@ -54,9 +54,9 @@ export default {
         })
     },
 
-    get(url, data) {
+    get(url, params) {
         return new Promise((resolve, reject) => {
-            service.get(url, data)
+            service.get(url, {params: params})
                 .then(res => {
                     resolve(res)
                 }).catch(err => {

@@ -15,6 +15,7 @@
           <el-row :gutter="10">
             <el-col :span="12">
               <el-input
+                  size="default"
                   v-model="loginForm.code"
                   placeholder="验证码">
               </el-input>
@@ -23,6 +24,9 @@
               <img class="verifyCodeImg" :src="imgUrl" @click="resetCode">
             </el-col>
           </el-row>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="rememberMe" label="记住我"></el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button style="width: 100%;" type="primary" @click="doLogin">登录</el-button>
@@ -44,9 +48,11 @@ export default {
         password: 'admin',
         code: ''
       },
+      rememberMe: true,
       imgUrl: 'http://localhost:9001/api/v1/user/code?time=' + new Date(),
     }
   },
+
   methods: {
     doLogin() {
       userApi.doLogin(this.loginForm)
@@ -78,7 +84,7 @@ export default {
 
 #container .login-box {
   width: 350px;
-  height: 350px;
+  height: 360px;
   border-radius: 10px;
   border: 1px solid lightgray;
   background: white;
@@ -88,10 +94,14 @@ export default {
   text-align: center;
   margin-top: 12px;
   margin-bottom: 15px;
+  color: rgb(91, 89, 89);
 }
 
 #container .login-box .form-box {
   padding-left: 20px;
   padding-right: 20px;
+}
+.el-form-item--large {
+  margin-bottom: 16px !important;
 }
 </style>

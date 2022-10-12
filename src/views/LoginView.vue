@@ -7,7 +7,22 @@
           <el-input v-model="loginForm.account"/>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="loginForm.password" type="password"/>
+          <el-input v-model="loginForm.password"
+                    type="password"
+                    show-password/>
+        </el-form-item>
+        <el-form-item prop="verifyCode">
+          <el-row :gutter="10">
+            <el-col :span="12">
+              <el-input
+                  v-model="loginForm.code"
+                  placeholder="验证码">
+              </el-input>
+            </el-col>
+            <el-col :span="12">
+              <img class="verifyCodeImg" :src="imgUrl" @click="resetCode">
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item>
           <el-button style="width: 100%;" type="primary" @click="doLogin">登录</el-button>
@@ -26,8 +41,10 @@ export default {
     return {
       loginForm: {
         account: 'admin',
-        password: 'admin'
-      }
+        password: 'admin',
+        code: ''
+      },
+      imgUrl: 'http://localhost:9001/api/v1/user/code?time=' + new Date(),
     }
   },
   methods: {
@@ -42,6 +59,9 @@ export default {
             }
           })
     },
+    resetCode() {
+      this.imgUrl = 'http://localhost:9001/api/v1/user/code?time=' + new Date()
+    }
   }
 }
 </script>
@@ -52,6 +72,8 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  /*background: url("public/pic.webp");*/
+  background-image: linear-gradient(#fcec3c, #ee0cc9);
 }
 
 #container .login-box {
@@ -59,6 +81,7 @@ export default {
   height: 350px;
   border-radius: 10px;
   border: 1px solid lightgray;
+  background: white;
 }
 
 #container .login-box h1 {

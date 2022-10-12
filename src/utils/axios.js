@@ -7,6 +7,7 @@ const service = axios.create({
     // headers: {
     //     'Content-Type': 'application/json;charset=utf-8',
     // },
+    withCredentials: true,
     timeout: 30000, // 请求超时时间
 })
 service.interceptors.request.use(

@@ -34,8 +34,9 @@ export default {
     doLogin() {
       userApi.doLogin(this.loginForm)
           .then(res => {
-            if (res.code === 0) {
-              window.localStorage.setItem('token', res.data)
+            if (res.code === 0 && res.data.token) {
+              console.log(res)
+              window.localStorage.setItem('token', res.data.token)
               this.$router.push('/dataSource')
               ElMessage.success('登录成功～')
             }

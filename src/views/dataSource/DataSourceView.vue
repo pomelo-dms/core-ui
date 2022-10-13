@@ -42,8 +42,9 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="small" @click="openUpdateDataSourceDrawer(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="small" type="warning" @click="openUpdateDataSourceDrawer(scope.$index, scope.row)">编辑</el-button>
           <el-button size="small" type="primary" @click="testConnection(scope.$index, scope.row)">连通性测试</el-button>
+          <el-button size="small" type="info" @click="goToGoodPlace(scope.$index, scope.row)">进入控制台</el-button>
           <el-button size="small" type="danger" @click="deleteDataSource(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -140,6 +141,23 @@ export default {
           })
           .catch(() => {
             // catch error
+          })
+    },
+    goToGoodPlace(index, row) {
+      dataSourceApi.testConnection(row)
+          .then(res => {
+            if (res.code === 0) {
+              if (res.data.connected) {
+                this.$router.push('/console/mysql')
+              } else {
+                ElNotification({
+                  title: '数据源测试连接失败，请先检查数据源参数',
+                  message: res.data.msg,
+                  type: 'error',
+                  offset: 20,
+                })
+              }
+            }
           })
     }
   }

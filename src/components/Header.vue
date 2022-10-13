@@ -18,7 +18,7 @@ export default {
 .header-box{
   width: 100%;
   height: 50px;
-  background-color: aquamarine;
+  background-color: #4ce76f;
 }
 .userInfo-box{
   float: right;

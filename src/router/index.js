@@ -4,6 +4,7 @@ const routes = [
     {path: '/', redirect: 'login'},
     {path: '/login', name: 'LoginView', component: () => import('../views/LoginView.vue')},
     {path: '/dataSource', name: 'DataSourceView', component: () => import('../views/dataSource/DataSourceView.vue')},
+    {path: '/console/mysql', name: 'MySQLView', component: () => import('../views/mysql/MySQLView.vue')},
 ]
 
 const router = createRouter({

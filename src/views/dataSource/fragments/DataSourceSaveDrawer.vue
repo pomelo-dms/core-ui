@@ -1,11 +1,11 @@
 <template>
   <el-drawer
       ref="drawerRef"
-      v-model="addDataSourceDrawer"
-      :title="this.openParams.title"
+      v-model="show"
+      :title="title"
       size="30%"
       direction="rtl"
-      before-close="handle"
+      :before-close="handleCloseDrawer"
   >
     <div>
       <el-form :model="dataSourceFm" size="default" :label-width="100">
@@ -29,7 +29,7 @@
           <el-input v-model="dataSourceFm.username" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="密码：">
-          <el-input v-model="dataSourceFm.password" autocomplete="off"/>
+          <el-input type="password" v-model="dataSourceFm.password" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="描述：">
           <el-input v-model="dataSourceFm.description" autocomplete="off"/>
@@ -48,29 +48,31 @@
 
 <script>
 import dataSourceApi from '../../../utils/api/dataSource.js'
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {
-  name: "SaveDrawer",
-  props: {
-    openParams: {
-      title: String,
-      isOpen: Boolean,
-      dataSourceId: String
-    }
-  },
+  name: "DataSourceSaveDrawer",
   data() {
     return {
-      addDataSourceDrawer: this.openParams.isOpen,
+      title: '',
+      dataSourceId: 0,
+      show: false,
       dataSourceFm: {},
+    }
+  },
+  watch: {
+    show(newVal, oldVal) {
+      if (newVal) {
+        this.init()
+      }
     }
   },
   methods: {
     cancelCreate() {
-      this.addDataSourceDrawer = false
+      this.closeDrawer()
     },
     saveDataSource() {
-      if (this.openParams.title.contains('创建')) {
+      if (this.title.indexOf('创建') !== -1) {
         // 创建
         dataSourceApi.addDataSource(this.dataSourceFm)
             .then(res => {
@@ -79,8 +81,10 @@ export default {
                 ElMessage.success('数据源创建成功～')
                 // todo 创建成功，
                 //  关闭抽屉
+                this.show = false
+                this.dataSourceFm = {}
                 //  调用父组件的 doSearch 方法刷新表格
-
+                this.$parent.doSearch();
               }
             })
       } else {
@@ -92,11 +96,37 @@ export default {
                 ElMessage.success('数据源修改成功～')
                 // todo 创建成功，
                 //  关闭抽屉
+                this.show = false
+                this.dataSourceFm = {}
                 //  调用父组件的 doSearch 方法刷新表格
-
+                this.$parent.doSearch();
               }
             })
       }
+    },
+    handleCloseDrawer() {
+      this.closeDrawer()
+    },
+    init() {
+      if (this.title.indexOf('修改') !== -1 && this.dataSourceId !== 0) {
+        dataSourceApi.getDataSource(this.dataSourceId)
+            .then(res => {
+              console.log(res)
+              if (res.code === 0) {
+                this.dataSourceFm = res.data
+              }
+            })
+      }
+    },
+    closeDrawer() {
+      ElMessageBox.confirm('你可能有未保存的数据，确定要退出吗？')
+          .then(() => {
+            this.show = false
+            this.dataSourceFm = {}
+          })
+          .catch(() => {
+            // catch error
+          })
     }
   }
 }

@@ -9,9 +9,11 @@
         <el-button @click="doSearch">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="openDataSourceSaveDrawer">添加数据源</el-button>
+        <el-button type="primary" @click="openCreateDataSourceDrawer">添加数据源</el-button>
+
       </el-form-item>
     </el-form>
+    <DataSourceSaveDrawer ref="dataSourceSaveDrawer"/>
     <el-table :data="dataSourceList"
               border
               style="width: 80%">
@@ -40,9 +42,9 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="small" @click="openUpdateDataSourceDrawer(scope.$index, scope.row)">编辑</el-button>
           <el-button size="small" type="primary" @click="testConnection(scope.$index, scope.row)">连通性测试</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="small" type="danger" @click="deleteDataSource(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -52,12 +54,12 @@
 <script>
 import dataSourceApi from "../../utils/api/dataSource.js";
 import Header from "../../components/Header.vue";
-import SaveDrawer from "./fragments/SaveDrawer.vue";
-import {ElMessage, ElNotification} from "element-plus";
+import DataSourceSaveDrawer from "./fragments/DataSourceSaveDrawer.vue";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 export default {
   name: "DataSourceView",
-  components: {SaveDrawer, Header},
+  components: {DataSourceSaveDrawer, Header},
   data() {
     return {
       currentUser: {},
@@ -67,9 +69,6 @@ export default {
       pageSize: 10,
       total: 0,
       dataSourceList: [],
-
-      // 抽屉组件传值
-      drawer: {}
     }
   },
   created() {
@@ -90,19 +89,16 @@ export default {
             }
           })
     },
-    openDataSourceSaveDrawer() {
-      this.drawer.isOpen = true
-    },
+
+    // 测试数据源的连通性
     testConnection(index, row) {
-      console.log(row)
       dataSourceApi.testConnection(row)
           .then(res => {
-            console.log(res)
             if (res.code === 0) {
               if (res.data.connected) {
                 ElNotification({
                   title: '成功',
-                  message: res.msg +'[' + row.name + ']',
+                  message: res.data.msg +'：[' + row.name + ']',
                   type: 'success',
                   offset: 20,
                 })
@@ -115,6 +111,35 @@ export default {
                 })
               }
             }
+          })
+    },
+
+    // 打开创建数据源抽屉
+    openCreateDataSourceDrawer() {
+      this.$refs.dataSourceSaveDrawer.dataSourceId = 0
+      this.$refs.dataSourceSaveDrawer.title = '创建数据源'
+      this.$refs.dataSourceSaveDrawer.show = true
+    },
+    openUpdateDataSourceDrawer(index, row) {
+      this.$refs.dataSourceSaveDrawer.dataSourceId = row.id
+      this.$refs.dataSourceSaveDrawer.title = '修改数据源'
+      this.$refs.dataSourceSaveDrawer.show = true
+    },
+    deleteDataSource(index, row) {
+      ElMessageBox.confirm('确定要删除数据源 ['+ row.name +'] 吗？')
+          .then(() => {
+            dataSourceApi.deleteDataSource(row.id)
+                .then(res => {
+                  console.log(res)
+                  if (res.code === 0 && res.data) {
+                    ElMessage.success('数据源删除成功～')
+                  } else {
+                    ElMessage.error('数据源删除失败：' + res.msg)
+                  }
+                })
+          })
+          .catch(() => {
+            // catch error
           })
     }
   }

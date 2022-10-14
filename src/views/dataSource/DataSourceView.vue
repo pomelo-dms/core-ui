@@ -53,7 +53,7 @@
 <script>
 import dataSourceApi from "../../utils/api/dataSource.js";
 import Header from "../../components/Header.vue";
-import DataSourceSaveDrawer from "./fragments/DataSourceSaveDrawer.vue";
+import DataSourceSaveDrawer from "../../components/dataSource/DataSourceSaveDrawer.vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 export default {

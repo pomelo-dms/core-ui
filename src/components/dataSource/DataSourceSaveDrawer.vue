@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import dataSourceApi from '../../../utils/api/dataSource.js'
+import dataSourceApi from '../../utils/api/dataSource.js'
 import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {

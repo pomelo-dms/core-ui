@@ -1,5 +1,4 @@
 <template>
-  <Header></Header>
   <div class="dataSource-main">
     <el-form :inline="true" class="demo-form-inline" size="default">
       <el-form-item label="输入数据源名称：">
@@ -15,8 +14,7 @@
     </el-form>
     <DataSourceSaveDrawer ref="dataSourceSaveDrawer"/>
     <el-table :data="dataSourceList"
-              border
-              style="width: 80%">
+              border>
       <el-table-column prop="id" label="ID" width="50"/>
       <el-table-column prop="name" label="数据库名称" width="120"/>
       <el-table-column label="数据库类型" width="120" sortable="true">
@@ -167,10 +165,5 @@ export default {
 <style scoped>
 .dataSource-main {
   width: 100%;
-  margin: 10px auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 </style>

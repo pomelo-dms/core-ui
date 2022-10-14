@@ -3,7 +3,23 @@ import {createRouter, createWebHashHistory} from "vue-router";
 const routes = [
     {path: '/', redirect: 'login'},
     {path: '/login', name: 'LoginView', component: () => import('../views/LoginView.vue')},
-    {path: '/dataSource', name: 'DataSourceView', component: () => import('../views/dataSource/DataSourceView.vue')},
+    {
+        path: '/main',
+        name: 'MainView',
+        component: () => import('../views/MainView.vue'),
+        children: [
+            {
+                path: '/welcome',
+                name: 'WelcomeView',
+                component: () => import('../views/WelcomeView.vue')
+            },
+            {
+                path: '/dataSource',
+                name: 'DataSourceView',
+                component: () => import('../views/dataSource/DataSourceView.vue')
+            },
+        ]
+    },
     {path: '/console/mysql', name: 'MySQLView', component: () => import('../views/mysql/MySQLView.vue')},
 ]
 

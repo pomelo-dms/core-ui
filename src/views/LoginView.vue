@@ -15,6 +15,7 @@
           <el-row :gutter="10">
             <el-col :span="12">
               <el-input
+                  ref="code"
                   size="default"
                   v-model="loginForm.code"
                   placeholder="验证码">
@@ -52,7 +53,9 @@ export default {
       imgUrl: 'http://localhost:9001/api/v1/user/code?time=' + new Date(),
     }
   },
-
+  mounted() {
+    this.$refs.code.focus()
+  },
   methods: {
     doLogin() {
       userApi.doLogin(this.loginForm)

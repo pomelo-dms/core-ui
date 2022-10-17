@@ -5,7 +5,7 @@
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
     <span class="el-dropdown-link">
-      <img src="../../public/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
+      <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
       <el-icon size="large"><CaretBottom/></el-icon>
     </span>
         <template #dropdown>

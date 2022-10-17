@@ -1,10 +1,8 @@
 <template>
   <div class="header-box">
-    <div style="display: inline-flex;align-items: center">
+    <div class="logo-img">
       <img src="../assets/vue.svg" alt="">
-      <span style="line-height: 50px;display: inline-block;margin-left: 10px">
-      Pomelo 多数据源管理系统
-    </span>
+      <span class="logo-text">Pomelo 多数据源管理系统</span>
     </div>
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
@@ -82,7 +80,16 @@ function handleCommand(cmd) {
   color: #fff;
   background-color: #292e31;
 }
-
+.header-box .logo-img{
+  display: inline-flex;
+  align-items: center;
+}
+.header-box .logo-text{
+  display: inline-block;
+  line-height: 50px;
+  margin-left: 10px;
+  font-weight: bold;
+}
 .userInfo-box {
   float: right;
   color: #777676;

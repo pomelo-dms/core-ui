@@ -23,18 +23,15 @@
   </el-container>
 </template>
 
-<script>
+<script setup>
 import Header from "../components/Header.vue";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "MainView",
-  components: {Header},
-  methods: {
-    menuClick(index){
-      //路由跳转
-      this.$router.push(index)
-    },
-  }
+const router = useRouter()
+
+function menuClick(index){
+  //路由跳转
+  router.push(index)
 }
 </script>
 

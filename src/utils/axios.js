@@ -3,7 +3,8 @@ import axios from "axios";
 import {ElMessage} from 'element-plus'
 
 const service = axios.create({
-    baseURL: 'http://localhost:9001/api/v1/',
+    // baseURL: 'http://localhost:9001/api/v1/',
+    baseURL: import.meta.env.VITE_BASE_URL,
     // headers: {
     //     'Content-Type': 'application/json;charset=utf-8',
     // },

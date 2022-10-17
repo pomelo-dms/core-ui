@@ -1,8 +1,10 @@
 import { defineStore} from 'pinia'
 
-export const mainStore = defineStore('main',{
+export const userStore = defineStore('user',{
     state:()=>{
-        return {}
+        return {
+            currentUser: {}
+        }
     },
     getters:{},
     actions:{}

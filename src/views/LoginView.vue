@@ -22,7 +22,7 @@
               </el-input>
             </el-col>
             <el-col :span="12">
-              <img class="verifyCodeImg" :src="imgUrl" @click="resetCode">
+              <img class="verifyCodeImg" :src="imgUrl" @click="resetCode" alt="验证码">
             </el-col>
           </el-row>
         </el-form-item>
@@ -37,41 +37,39 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import {ref, reactive} from "vue";
 import {ElMessage} from "element-plus";
 import userApi from '../utils/api/user.js'
-export default {
-  name: "LoginView",
-  data() {
-    return {
-      loginForm: {
-        account: 'admin',
-        password: 'admin',
-        code: ''
-      },
-      rememberMe: true,
-      imgUrl: 'http://localhost:9001/api/v1/user/code?time=' + new Date(),
-    }
-  },
-  mounted() {
-    this.$refs.code.focus()
-  },
-  methods: {
-    doLogin() {
-      userApi.doLogin(this.loginForm)
-          .then(res => {
-            if (res.code === 0 && res.data.token) {
-              console.log(res)
-              window.localStorage.setItem('token', res.data.token)
-              this.$router.push('/dataSource')
-              ElMessage.success('登录成功～')
-            }
-          })
-    },
-    resetCode() {
-      this.imgUrl = 'http://localhost:9001/api/v1/user/code?time=' + new Date()
-    }
-  }
+import {userStore} from "../store/index.js";
+import {useRouter} from 'vue-router'
+
+const store = userStore()
+const router = useRouter()
+
+let loginForm = reactive({
+  account: 'admin',
+  password: 'admin',
+  code: '9527'
+})
+const rememberMe = ref(true)
+let imgUrl = ref(import.meta.env.VITE_BASE_URL + '/user/code?time=' + new Date())
+
+function doLogin() {
+  userApi.doLogin(loginForm)
+      .then(res => {
+        if (res.code === 0 && res.data.token) {
+          store.currentUser = res.data
+          window.localStorage.setItem('token', res.data.token)
+          window.localStorage.setItem('currentUser', JSON.stringify(res.data))
+          router.push('/dataSource')
+          ElMessage.success('登录成功～')
+        }
+      })
+}
+
+function resetCode() {
+  imgUrl.value = import.meta.env.VITE_BASE_URL + '/user/code?time=' + new Date()
 }
 </script>
 
@@ -104,6 +102,7 @@ export default {
   padding-left: 20px;
   padding-right: 20px;
 }
+
 .el-form-item--large {
   margin-bottom: 16px !important;
 }

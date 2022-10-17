@@ -1,7 +1,11 @@
 <template>
   <div class="header-box">
-    <img src="../assets/vue.svg" alt="">
-    Pomelo xx系统
+    <div style="display: inline-flex;align-items: center">
+      <img src="../assets/vue.svg" alt="">
+      <span style="line-height: 50px;display: inline-block;margin-left: 10px">
+      Pomelo 多数据源管理系统
+    </span>
+    </div>
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
     <span class="el-dropdown-link">

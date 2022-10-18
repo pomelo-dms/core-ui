@@ -1,25 +1,51 @@
 <template>
-  <el-menu class="main-aside-menu" @select="menuClick">
-    <el-menu-item index="/welcome">首页</el-menu-item>
-    <el-menu-item index="/dataSource">数据源管理</el-menu-item>
-    <el-sub-menu index="3">
-      <template #title>
-        系统管理
-      </template>
-      <el-menu-item index="#">用户管理</el-menu-item>
-      <el-menu-item index="#">权限管理</el-menu-item>
-      <el-menu-item index="#">角色管理</el-menu-item>
-      <el-menu-item index="#">系统设置</el-menu-item>
-    </el-sub-menu>
+  <el-menu
+      active-text-color="#ffd04b"
+      router
+      class="main-aside-menu"
+      @select="menuClick"
+  >
+    <template v-for="(item, index) in menuItemList">
+      <el-sub-menu v-if="item.children && item.children.length > 0" :key="item.path" :index=item.path>
+        <template #title>
+          <el-icon>
+            <component :is="item.meta.icon"/>
+          </el-icon>
+          {{ item.meta.title }}
+        </template>
+        <el-menu-item v-for="child in item.children" :index="child.path">
+          <el-icon>
+            <component :is="child.meta.icon"/>
+          </el-icon>
+          {{ child.meta.title }}
+        </el-menu-item>
+      </el-sub-menu>
+      <el-menu-item v-if="!item.children" :index="item.path">
+        <el-icon>
+          <component :is="item.meta.icon"/>
+        </el-icon>
+        {{ item.meta.title }}
+      </el-menu-item>
+    </template>
+
   </el-menu>
 </template>
 
 <script setup>
 import {useRouter} from "vue-router";
+import {onMounted} from "vue";
 
 const router = useRouter()
+const routes = router.options.routes
+const menuItemList = routes.filter(route => {
+  return route.children && route.children.length > 0
+})[0].children
 
-function menuClick(index){
+onMounted(() => {
+  // console.log(menuItemList)
+})
+
+function menuClick(index) {
   //路由跳转
   router.push(index)
 }

@@ -73,7 +73,9 @@ function handleCommand(cmd) {
 }
 
 function backMain() {
-  router.push('')
+  router.push({
+    name: 'WelcomeView'
+  })
 }
 </script>
 

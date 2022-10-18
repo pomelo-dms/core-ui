@@ -76,9 +76,9 @@ export default {
             });
         })
     },
-    delete(url, data) {
+    delete(url, params) {
         return new Promise((resolve, reject) => {
-            service.delete(url, data)
+            service.delete(url, {params: params})
                 .then(res => {
                     resolve(res)
                 }).catch(err => {

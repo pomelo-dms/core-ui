@@ -12,7 +12,10 @@
 
       </el-form-item>
     </el-form>
-    <DataSourceSaveDrawer ref="dataSourceSaveDrawer"/>
+    <DataSourceSaveDrawer
+        ref="dataSourceSaveDrawer"
+        @refreshDataSourceTable="doSearch"
+    />
     <el-table :data="dataSourceList"
               border>
       <el-table-column prop="id" label="ID" width="50"/>
@@ -40,7 +43,8 @@
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="small" type="warning" @click="openUpdateDataSourceDrawer(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="small" type="warning" @click="openUpdateDataSourceDrawer(scope.$index, scope.row)">编辑
+          </el-button>
           <el-button size="small" type="primary" @click="testConnection(scope.$index, scope.row)">连通性测试</el-button>
           <el-button size="small" type="info" @click="goToGoodPlace(scope.$index, scope.row)">进入控制台</el-button>
           <el-button size="small" type="danger" @click="deleteDataSource(scope.$index, scope.row)">删除</el-button>
@@ -50,115 +54,118 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import dataSourceApi from "../../utils/api/dataSource.js";
-import Header from "../../components/Header.vue";
 import DataSourceSaveDrawer from "../../components/dataSource/DataSourceSaveDrawer.vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
+import {ref, reactive, onMounted} from "vue";
+import {useRouter} from "vue-router";
 
-export default {
-  name: "DataSourceView",
-  components: {DataSourceSaveDrawer, Header},
-  data() {
-    return {
-      currentUser: {},
+const router = useRouter()
 
-      dataSourceName: '',
-      pageNum: 1,
-      pageSize: 10,
-      total: 0,
-      dataSourceList: [],
-    }
-  },
-  created() {
-    this.doSearch()
-  },
-  methods: {
-    doSearch() {
-      const params = {
-        pageNum: this.pageNum,
-        pageSize: this.pageSize,
-        keyword: this.dataSourceName,
-      }
-      dataSourceApi.doSearch(params)
-          .then(res => {
-            if (res.code === 0) {
-              this.dataSourceList = res.data.dataSourceDOList
-              this.total = res.data.total
-            }
-          })
-    },
+const dataSourceName = ref('')
+const pageNum = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const dataSourceList = ref([])
 
-    // 测试数据源的连通性
-    testConnection(index, row) {
-      dataSourceApi.testConnection(row)
-          .then(res => {
-            if (res.code === 0) {
-              if (res.data.connected) {
-                ElNotification({
-                  title: '成功',
-                  message: res.data.msg +'：[' + row.name + ']',
-                  type: 'success',
-                  offset: 20,
-                })
-              } else {
-                ElNotification({
-                  title: '数据源连接失败',
-                  message: res.data.msg,
-                  type: 'error',
-                  offset: 20,
-                })
-              }
-            }
-          })
-    },
+onMounted(() => {
+  doSearch()
+})
 
-    // 打开创建数据源抽屉
-    openCreateDataSourceDrawer() {
-      this.$refs.dataSourceSaveDrawer.dataSourceId = 0
-      this.$refs.dataSourceSaveDrawer.title = '创建数据源'
-      this.$refs.dataSourceSaveDrawer.show = true
-    },
-    openUpdateDataSourceDrawer(index, row) {
-      this.$refs.dataSourceSaveDrawer.dataSourceId = row.id
-      this.$refs.dataSourceSaveDrawer.title = '修改数据源'
-      this.$refs.dataSourceSaveDrawer.show = true
-    },
-    deleteDataSource(index, row) {
-      ElMessageBox.confirm('确定要删除数据源 ['+ row.name +'] 吗？')
-          .then(() => {
-            dataSourceApi.deleteDataSource(row.id)
-                .then(res => {
-                  console.log(res)
-                  if (res.code === 0 && res.data) {
-                    ElMessage.success('数据源删除成功～')
-                  } else {
-                    ElMessage.error('数据源删除失败：' + res.msg)
-                  }
-                })
-          })
-          .catch(() => {
-            // catch error
-          })
-    },
-    goToGoodPlace(index, row) {
-      dataSourceApi.testConnection(row)
-          .then(res => {
-            if (res.code === 0) {
-              if (res.data.connected) {
-                this.$router.push('/console/mysql')
-              } else {
-                ElNotification({
-                  title: '数据源测试连接失败，请先检查数据源参数',
-                  message: res.data.msg,
-                  type: 'error',
-                  offset: 20,
-                })
-              }
-            }
-          })
-    }
+// 数据源表格初始化查询方法
+function doSearch() {
+  const params = {
+    pageNum: pageNum.value,
+    pageSize: pageSize.value,
+    keyword: dataSourceName.value,
   }
+  dataSourceApi.doSearch(params)
+      .then(res => {
+        if (res.code === 0) {
+          dataSourceList.value = res.data.dataSourceDOList
+          total.value = res.data.total
+        }
+      })
+}
+
+// 测试数据源的连通性
+function testConnection(index, row) {
+  dataSourceApi.testConnection(row)
+      .then(res => {
+        if (res.code === 0) {
+          if (res.data.connected) {
+            ElNotification({
+              title: '成功',
+              message: res.data.msg + '：[' + row.name + ']',
+              type: 'success',
+              offset: 20,
+            })
+          } else {
+            ElNotification({
+              title: '数据源连接失败',
+              message: res.data.msg,
+              type: 'error',
+              offset: 20,
+            })
+          }
+        }
+      })
+}
+
+// 打开创建数据源更新和添加的抽屉
+const dataSourceSaveDrawer = ref(null)
+
+// 打开创建数据源抽屉
+function openCreateDataSourceDrawer() {
+  dataSourceSaveDrawer.value.title = '创建数据源'
+  dataSourceSaveDrawer.value.isShow = true
+  dataSourceSaveDrawer.value.init()
+}
+// 打开更新数据源抽屉
+function openUpdateDataSourceDrawer(index, row) {
+  dataSourceSaveDrawer.value.dataSourceId = row.id
+  dataSourceSaveDrawer.value.title = '修改数据源'
+  dataSourceSaveDrawer.value.isShow = true
+  dataSourceSaveDrawer.value.init()
+}
+
+// 删除数据源
+function deleteDataSource(index, row) {
+  ElMessageBox.confirm('确定要删除数据源 [' + row.name + '] 吗？')
+      .then(() => {
+        dataSourceApi.deleteDataSource(row.id)
+            .then(res => {
+              if (res.code === 0 && res.data) {
+                doSearch()
+                ElMessage.success('数据源删除成功～')
+              } else {
+                ElMessage.error('数据源删除失败：' + res.msg)
+              }
+            })
+      })
+      .catch(() => {
+        // catch error
+      })
+}
+
+// 跳转到控制台
+function goToGoodPlace(index, row) {
+  dataSourceApi.testConnection(row)
+      .then(res => {
+        if (res.code === 0) {
+          if (res.data.connected) {
+            router.push('/console/mysql')
+          } else {
+            ElNotification({
+              title: '数据源测试连接失败，请先检查数据源参数',
+              message: res.data.msg,
+              type: 'error',
+              offset: 20,
+            })
+          }
+        }
+      })
 }
 </script>
 

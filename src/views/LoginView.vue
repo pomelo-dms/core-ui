@@ -62,7 +62,7 @@ function doLogin() {
           store.currentUser = res.data
           window.localStorage.setItem('token', res.data.token)
           window.localStorage.setItem('currentUser', JSON.stringify(res.data))
-          router.push('/dataSource')
+          router.push('/main')
           ElMessage.success('登录成功～')
         }
       })

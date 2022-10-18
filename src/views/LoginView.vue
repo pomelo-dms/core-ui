@@ -41,7 +41,7 @@
 import {ref, reactive} from "vue";
 import {ElMessage} from "element-plus";
 import userApi from '../utils/api/user.js'
-import {userStore} from "../store/index.js";
+import {userStore} from "../store/user.js";
 import {useRouter} from 'vue-router'
 
 const store = userStore()

@@ -58,7 +58,7 @@
 import dataSourceApi from "../../utils/api/dataSource.js";
 import DataSourceSaveDrawer from "../../components/dataSource/DataSourceSaveDrawer.vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
-import {ref, reactive, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
 
 const router = useRouter()
@@ -155,7 +155,10 @@ function goToGoodPlace(index, row) {
       .then(res => {
         if (res.code === 0) {
           if (res.data.connected) {
-            router.push('/console/mysql')
+            router.push({
+              path : '/console/mysql',
+              query: {dataSourceId: row.id}
+            })
           } else {
             ElNotification({
               title: '数据源测试连接失败，请先检查数据源参数',

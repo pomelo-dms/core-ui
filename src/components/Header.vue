@@ -1,6 +1,6 @@
 <template>
   <div class="header-box">
-    <div class="logo-img">
+    <div @click="backMain" class="logo-img">
       <img src="../assets/vue.svg" alt="">
       <span class="logo-text">Pomelo 多数据源管理系统</span>
     </div>
@@ -70,6 +70,10 @@ function handleCommand(cmd) {
       break;
   }
 
+}
+
+function backMain() {
+  router.push('')
 }
 </script>
 

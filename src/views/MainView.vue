@@ -48,7 +48,7 @@ function menuClick(index){
 
 .main-aside .main-aside-menu {
   height: inherit;
-  background-color: #f8d3f1;
+  background-color: #f1f2f6;
 }
 
 .main-main {

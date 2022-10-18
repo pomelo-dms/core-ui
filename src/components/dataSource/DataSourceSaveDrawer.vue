@@ -35,7 +35,7 @@
           <el-input v-model="dataSourceFm.description" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="是否启用：">
-          <el-input v-model="dataSourceFm.enabled" autocomplete="off"/>
+          <el-switch v-model="dataSourceFm.enabled" />
         </el-form-item>
       </el-form>
       <div>

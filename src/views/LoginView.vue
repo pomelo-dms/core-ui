@@ -41,7 +41,7 @@
 import {ref, reactive} from "vue";
 import {ElMessage} from "element-plus";
 import userApi from '../utils/api/user.js'
-import {userStore} from "../store/index.js";
+import {userStore} from "../store/user.js";
 import {useRouter} from 'vue-router'
 
 const store = userStore()
@@ -62,7 +62,7 @@ function doLogin() {
           store.currentUser = res.data
           window.localStorage.setItem('token', res.data.token)
           window.localStorage.setItem('currentUser', JSON.stringify(res.data))
-          router.push('/dataSource')
+          router.push('/main')
           ElMessage.success('登录成功～')
         }
       })

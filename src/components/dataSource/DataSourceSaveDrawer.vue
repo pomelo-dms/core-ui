@@ -1,11 +1,11 @@
 <template>
   <el-drawer
       ref="drawerRef"
-      v-model="show"
+      v-model="isShow"
       :title="title"
       size="30%"
       direction="rtl"
-      :before-close="handleCloseDrawer"
+      :before-close="closeDrawer"
   >
     <div>
       <el-form :model="dataSourceFm" size="default" :label-width="100">
@@ -35,100 +35,85 @@
           <el-input v-model="dataSourceFm.description" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="是否启用：">
-          <el-input v-model="dataSourceFm.enabled" autocomplete="off"/>
+          <el-switch v-model="dataSourceFm.enabled" />
         </el-form-item>
       </el-form>
       <div>
-        <el-button @click="cancelCreate">取消</el-button>
+        <el-button @click="closeDrawer">取消</el-button>
         <el-button type="primary" @click="saveDataSource">保存</el-button>
       </div>
     </div>
   </el-drawer>
 </template>
 
-<script>
+<script setup>
 import dataSourceApi from '../../utils/api/dataSource.js'
 import {ElMessage, ElMessageBox} from "element-plus";
+import {ref} from "vue";
 
-export default {
-  name: "DataSourceSaveDrawer",
-  data() {
-    return {
-      title: '',
-      dataSourceId: 0,
-      show: false,
-      dataSourceFm: {},
-    }
-  },
-  watch: {
-    show(newVal, oldVal) {
-      if (newVal) {
-        this.init()
-      }
-    }
-  },
-  methods: {
-    cancelCreate() {
-      this.closeDrawer()
-    },
-    saveDataSource() {
-      if (this.title.indexOf('创建') !== -1) {
-        // 创建
-        dataSourceApi.addDataSource(this.dataSourceFm)
-            .then(res => {
-              console.log(res)
-              if (res.code === 0 && res.data) {
-                ElMessage.success('数据源创建成功～')
-                // todo 创建成功，
-                //  关闭抽屉
-                this.show = false
-                this.dataSourceFm = {}
-                //  调用父组件的 doSearch 方法刷新表格
-                this.$parent.doSearch();
-              }
-            })
-      } else {
-        // 更新
-        dataSourceApi.updateDataSource(this.dataSourceFm)
-            .then(res => {
-              console.log(res)
-              if (res.code === 0 && res.data) {
-                ElMessage.success('数据源修改成功～')
-                // todo 创建成功，
-                //  关闭抽屉
-                this.show = false
-                this.dataSourceFm = {}
-                //  调用父组件的 doSearch 方法刷新表格
-                this.$parent.doSearch();
-              }
-            })
-      }
-    },
-    handleCloseDrawer() {
-      this.closeDrawer()
-    },
-    init() {
-      if (this.title.indexOf('修改') !== -1 && this.dataSourceId !== 0) {
-        dataSourceApi.getDataSource(this.dataSourceId)
-            .then(res => {
-              console.log(res)
-              if (res.code === 0) {
-                this.dataSourceFm = res.data
-              }
-            })
-      }
-    },
-    closeDrawer() {
-      ElMessageBox.confirm('你可能有未保存的数据，确定要退出吗？')
-          .then(() => {
-            this.show = false
-            this.dataSourceFm = {}
-          })
-          .catch(() => {
-            // catch error
-          })
-    }
+const emit = defineEmits(['refreshDataSourceTable'])
+
+const title = ref('')
+const isShow = ref(false)
+const dataSourceId = ref(0)
+
+let dataSourceFm = ref({})
+
+function saveDataSource() {
+  if (title.value.indexOf('创建') !== -1) {
+    // 创建
+    dataSourceApi.addDataSource(dataSourceFm.value)
+        .then(res => {
+          if (res.code === 0 && res.data) {
+            ElMessage.success('数据源创建成功～')
+            //  关闭抽屉
+            isShow.value = false
+            dataSourceFm = {}
+            //  调用父组件的 doSearch 方法刷新表格
+            emit('refreshDataSourceTable')
+          }
+        })
+  } else {
+    // 更新
+    dataSourceApi.updateDataSource(dataSourceFm.value)
+        .then(res => {
+          if (res.code === 0 && res.data) {
+            ElMessage.success('数据源修改成功～')
+            //  关闭抽屉
+            isShow.value = false
+            dataSourceFm = {}
+            //  调用父组件的 doSearch 方法刷新表格
+            emit('refreshDataSourceTable')
+          }
+        })
   }
+}
+
+function init() {
+  if (title.value.indexOf('修改') !== -1 && dataSourceId.value !== 0) {
+    dataSourceApi.getDataSource(dataSourceId.value)
+        .then(res => {
+          if (res.code === 0) {
+            dataSourceFm.value = res.data
+          }
+        })
+  }
+}
+defineExpose({
+  title,
+  isShow,
+  dataSourceId,
+  init
+})
+function closeDrawer() {
+  ElMessageBox.confirm('你可能有未保存的数据，确定要退出吗？')
+      .then(() => {
+        isShow.value = false
+        dataSourceFm = {}
+      })
+      .catch(() => {
+        // catch error
+      })
 }
 </script>
 

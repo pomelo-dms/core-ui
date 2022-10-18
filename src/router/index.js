@@ -6,17 +6,44 @@ const routes = [
     {
         path: '/main',
         name: 'MainView',
+        redirect: 'welcome',
         component: () => import('../views/MainView.vue'),
         children: [
             {
                 path: '/welcome',
                 name: 'WelcomeView',
+                meta: {title: '首页', hasChildren: false, icon: 'HomeFilled'},
                 component: () => import('../views/WelcomeView.vue')
             },
             {
                 path: '/dataSource',
                 name: 'DataSourceView',
+                meta: {title: '数据源管理', hasChildren: false, icon: 'Grid'},
                 component: () => import('../views/dataSource/DataSourceView.vue')
+            },
+            {
+                path: '/sys',
+                meta: {title: '系统管理', hasChildren: true, icon: 'BellFilled'},
+                children: [
+                    {
+                        path: '/user',
+                        name: 'UserView',
+                        meta: {title: '用户管理', hasChildren: false, icon: 'UserFilled'},
+                        component: () => import('../views/sys/UserView.vue')
+                    },
+                    {
+                        path: '/role',
+                        name: 'RoleView',
+                        meta: {title: '角色管理', hasChildren: false, icon: 'Histogram'},
+                        component: () => import('../views/sys/RoleView.vue')
+                    },
+                    {
+                        path: '/config',
+                        name: 'SystemConfigView',
+                        meta: {title: '系统设置', hasChildren: false, icon: 'Tools'},
+                        component: () => import('../views/sys/SystemConfigView.vue')
+                    },
+                ]
             },
         ]
     },

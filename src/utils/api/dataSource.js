@@ -16,7 +16,7 @@ export default {
     testConnection(data) {
         return axios.post('/dataSource/testConnection', data)
     },
-    deleteDataSource(data) {
-        return axios.delete('/dataSource/', data)
+    deleteDataSource(dataSourceId) {
+        return axios.delete('/dataSource/'+ dataSourceId)
     }
 }

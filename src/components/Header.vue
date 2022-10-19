@@ -1,7 +1,7 @@
 <template>
   <div class="header-box">
-    <div @click="backMain" class="logo-img">
-      <img src="../assets/vue.svg" alt="">
+    <div class="logo-img">
+      <img @click="backMain"  src="../assets/vue.svg" alt="">
       <span class="logo-text">Pomelo 多数据源管理系统</span>
     </div>
     <div class="userInfo-box">

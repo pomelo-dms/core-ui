@@ -1,4 +1,5 @@
 import {createRouter, createWebHashHistory} from "vue-router";
+import {ElMessage} from "element-plus";
 
 const routes = [
     {path: '/', redirect: 'login'},
@@ -56,6 +57,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     if (to.name !== 'LoginView' && !window.localStorage.getItem('token')) {
+        ElMessage.error('您的回话已过期，请重新登录')
         next({name: 'LoginView'})
     } else {
         next()

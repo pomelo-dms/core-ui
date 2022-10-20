@@ -1,15 +1,16 @@
 <template>
   <div class="header-box">
     <div class="logo-img">
-      <img @click="backMain"  src="../assets/vue.svg" alt="">
+      <img @click="backMain" src="../assets/vue.svg" alt="">
       <span class="logo-text">Pomelo 多数据源管理系统</span>
     </div>
     <div class="userInfo-box">
+<!--      <el-button @click="toggleDark">切换主题</el-button>-->
       <el-dropdown size="default" @command="handleCommand">
-    <span class="el-dropdown-link">
-      <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
-      <el-icon size="large"><CaretBottom/></el-icon>
-    </span>
+        <span class="el-dropdown-link">
+          <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
+          <el-icon size="large"><CaretBottom/></el-icon>
+        </span>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
@@ -27,6 +28,10 @@
 import {CaretBottom} from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from 'element-plus'
+// import {useDark, useToggle} from '@vueuse/core'
+//
+// const isDark = useDark()
+// const toggleDark = useToggle(isDark)
 
 const currentUser = JSON.parse(window.localStorage.getItem('currentUser'))
 const router = useRouter()
@@ -86,16 +91,19 @@ function backMain() {
   color: #fff;
   background-color: #292e31;
 }
-.header-box .logo-img{
+
+.header-box .logo-img {
   display: inline-flex;
   align-items: center;
 }
-.header-box .logo-text{
+
+.header-box .logo-text {
   display: inline-block;
   line-height: 50px;
   margin-left: 10px;
   font-weight: bold;
 }
+
 .userInfo-box {
   float: right;
   color: #777676;

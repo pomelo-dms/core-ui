@@ -2,14 +2,17 @@
   <div class="header-box">
     <div class="logo-img">
       <img @click="backMain" src="../assets/vue.svg" alt="">
-      <span class="logo-text">Pomelo 多数据源管理系统</span>
+    </div>
+    <h2 class="logo-text">Pomelo 多数据源管理系统</h2>
+    <div class="header-menu">
+      <slot></slot>
     </div>
     <div class="userInfo-box">
-<!--      <el-button @click="toggleDark">切换主题</el-button>-->
       <el-dropdown size="default" @command="handleCommand">
         <span class="el-dropdown-link">
-          <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
+          <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 40px;height: 40px;"/>
           <el-icon size="large"><CaretBottom/></el-icon>
+          {{currentUser.name}}
         </span>
         <template #dropdown>
           <el-dropdown-menu>
@@ -93,17 +96,18 @@ function backMain() {
 }
 
 .header-box .logo-img {
-  display: inline-flex;
-  align-items: center;
+  float: left;
+  margin-left: 6px;
 }
 
 .header-box .logo-text {
-  display: inline-block;
-  line-height: 50px;
-  margin-left: 10px;
-  font-weight: bold;
+  float: left;
+  margin-left: 6px;
 }
-
+.header-box .header-menu{
+  float: left;
+  margin-left: 100px;
+}
 .userInfo-box {
   float: right;
   color: #777676;

@@ -1,5 +1,13 @@
 <template>
-  <Header/>
+  <Header>
+    <ul>
+      <li><a href="#">菜单一</a></li>
+      <li><a href="#">菜单一</a></li>
+      <li><a href="#">菜单一</a></li>
+      <li><a href="#">菜单一</a></li>
+      <li><a href="#">菜单一</a></li>
+    </ul>
+  </Header>
   <div class="mysql-container">
     <div class="mysql-aside">
       <div id="mysql-aside-info">
@@ -65,11 +73,21 @@ function getDataSourceInfo() {
 }
 
 .mysql-main {
-  background-color: #d98d8d;
+  background-color: #e1b1b1;
   flex: 1;
   height: inherit;
 }
 .el-divider--horizontal{
   margin: 5px 0;
+}
+
+li {
+  float: left;
+  padding-left: 25px;
+}
+a{
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
 }
 </style>

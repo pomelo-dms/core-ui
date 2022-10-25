@@ -1,8 +1,6 @@
 <template>
   <div class="header-box">
-    <div class="logo-img">
-      <img @click="backMain" src="../assets/vue.svg" alt="">
-    </div>
+    <img class="logo-img" @click="backMain" src="../assets/vue.svg" alt="">
     <h2 class="logo-text">Pomelo 多数据源管理系统</h2>
     <div class="header-menu">
       <slot></slot>
@@ -10,9 +8,10 @@
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
         <span class="el-dropdown-link">
-          <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 40px;height: 40px;"/>
+          <img src="/avatar.jpg"
+               style="margin-top: 3px;border-radius: 15px;width: 40px;height: 40px;vertical-align: middle"/>
           <el-icon size="large"><CaretBottom/></el-icon>
-          {{currentUser.name}}
+          {{ currentUser.name }}
         </span>
         <template #dropdown>
           <el-dropdown-menu>
@@ -96,18 +95,25 @@ function backMain() {
 }
 
 .header-box .logo-img {
+  display: inline-block;
   float: left;
+  height: 50%;
   margin-left: 6px;
+  vertical-align: middle;
 }
 
 .header-box .logo-text {
   float: left;
+  line-height: 50px;
+  font-size: 20px;
   margin-left: 6px;
 }
-.header-box .header-menu{
+
+.header-box .header-menu {
   float: left;
   margin-left: 100px;
 }
+
 .userInfo-box {
   float: right;
   color: #777676;

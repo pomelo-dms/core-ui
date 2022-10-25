@@ -86,8 +86,13 @@ li {
   padding-left: 25px;
 }
 a{
+  display: inline-block;
+  line-height: 50px;
   color: white;
   text-decoration: none;
   font-size: 20px;
+}
+a:hover {
+  color: red;
 }
 </style>

@@ -1,11 +1,10 @@
 <template>
   <Header>
     <ul>
-      <li><a href="#">菜单一</a></li>
-      <li><a href="#">菜单一</a></li>
-      <li><a href="#">菜单一</a></li>
-      <li><a href="#">菜单一</a></li>
-      <li><a href="#">菜单一</a></li>
+      <li><a href="#">SQL 控制台</a></li>
+      <li><a href="#">用户权限操作</a></li>
+      <li><a href="#">数据导入与导出</a></li>
+      <li><a href="#">帮助</a></li>
     </ul>
   </Header>
   <div class="mysql-container">
@@ -80,17 +79,19 @@ function getDataSourceInfo() {
 .el-divider--horizontal{
   margin: 5px 0;
 }
-
-li {
-  float: left;
-  padding-left: 25px;
+ul {
+  display: flex;
+  margin-left: 100px;
+}
+ul li {
+  padding-left: 30px;
 }
 a{
   display: inline-block;
   line-height: 50px;
   color: white;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 16px;
 }
 a:hover {
   color: red;

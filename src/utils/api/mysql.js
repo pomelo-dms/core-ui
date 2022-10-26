@@ -7,4 +7,7 @@ export default {
     getTreeLevel1(params) {
         return axios.get('/database/tree1', params);
     },
+    getTreeLevel2(params) {
+        return axios.get('/table/tree', params);
+    },
 }

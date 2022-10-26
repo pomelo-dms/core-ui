@@ -15,6 +15,7 @@
           <el-row :gutter="10">
             <el-col :span="12">
               <el-input
+                  autofocus
                   ref="code"
                   size="default"
                   v-model="loginForm.code"

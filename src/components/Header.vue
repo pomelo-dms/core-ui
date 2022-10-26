@@ -7,12 +7,12 @@
     </div>
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
-        <span class="el-dropdown-link">
+        <div>
           <img src="/avatar.jpg"
-               style="margin-top: 3px;border-radius: 15px;width: 40px;height: 40px;vertical-align: middle"/>
+               style="border-radius: 15px;width: 40px;height: 40px;"/>
           <el-icon size="large"><CaretBottom/></el-icon>
           {{ currentUser.name }}
-        </span>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>

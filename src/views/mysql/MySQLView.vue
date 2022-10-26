@@ -72,7 +72,6 @@ function getDataSourceInfo() {
 }
 
 .mysql-main {
-  background-color: #e1b1b1;
   flex: 1;
   height: inherit;
 }

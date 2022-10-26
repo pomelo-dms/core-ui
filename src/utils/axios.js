@@ -1,6 +1,6 @@
-import qs from 'qs'
 import axios from "axios";
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import router from "../router/index.js";
 
 const service = axios.create({
     // baseURL: 'http://localhost:9001/api/v1/',
@@ -26,20 +26,30 @@ service.interceptors.request.use(
         Promise.reject(error)
     }
 )
+
 service.interceptors.response.use(
     response => {
         if (response.data.code === -1) { // 未登录或 token 过期
+            ElMessage.error(response.data.msg)
             window.sessionStorage.setItem('token', '')
             return Promise.reject(response.data);
         } else if (response.data.code === 1) {  // 服务出错了
             ElMessage.error(response.data.msg)
+            // ElMessageBox.confirm("您尚未登录或会话已过期，是否重新登录~", "Warning", {
+            //     confirmButtonText: '重新登录',
+            //     cancelButtonText: '取消',
+            //     type: 'warning',
+            // }).then(() => {
+            //     router.push('/login')
+            // })
+
             return Promise.reject(response.data);
         } else {  // 正常响应
             return response.data
         }
     },
     error => {
-        ElMessage.error(error)
+        ElMessage.error('111' + error)
     }
 )
 

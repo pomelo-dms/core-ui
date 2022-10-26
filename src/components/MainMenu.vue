@@ -1,6 +1,7 @@
 <template>
   <el-menu
-      active-text-color="#ffd04b"
+      active-text-color="red"
+      :default-active="route.path"
       router
       class="main-aside-menu"
       @select="menuClick"
@@ -32,10 +33,11 @@
 </template>
 
 <script setup>
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import {onMounted} from "vue";
 
 const router = useRouter()
+const route = useRoute()
 const routes = router.options.routes
 const menuItemList = routes.filter(route => {
   return route.children && route.children.length > 0

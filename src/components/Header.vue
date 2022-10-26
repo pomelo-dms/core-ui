@@ -1,15 +1,18 @@
 <template>
   <div class="header-box">
-    <div @click="backMain" class="logo-img">
-      <img src="../assets/vue.svg" alt="">
-      <span class="logo-text">Pomelo 多数据源管理系统</span>
+    <img class="logo-img" @click="backMain" src="../assets/vue.svg" alt="">
+    <h2 class="logo-text">Pomelo 多数据源管理系统</h2>
+    <div class="header-menu">
+      <slot></slot>
     </div>
     <div class="userInfo-box">
       <el-dropdown size="default" @command="handleCommand">
-    <span class="el-dropdown-link">
-      <img src="/avatar.jpg" style="margin-top: 3px;border-radius: 15px;width: 42px;height: 42px;"/>
-      <el-icon size="large"><CaretBottom/></el-icon>
-    </span>
+        <div>
+          <img src="/avatar.jpg"
+               style="border-radius: 15px;width: 40px;height: 40px;"/>
+          <el-icon size="large"><CaretBottom/></el-icon>
+          {{ currentUser.name }}
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
@@ -27,6 +30,10 @@
 import {CaretBottom} from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from 'element-plus'
+// import {useDark, useToggle} from '@vueuse/core'
+//
+// const isDark = useDark()
+// const toggleDark = useToggle(isDark)
 
 const currentUser = JSON.parse(window.localStorage.getItem('currentUser'))
 const router = useRouter()
@@ -73,31 +80,39 @@ function handleCommand(cmd) {
 }
 
 function backMain() {
-  router.push('')
+  router.push({
+    name: 'WelcomeView'
+  })
 }
 </script>
 
 <style scoped>
 .header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 50px;
   color: #fff;
   background-color: #292e31;
 }
-.header-box .logo-img{
-  display: inline-flex;
-  align-items: center;
+
+.header-box .logo-img {
+  width: 30px;
+  margin: auto 10px;
 }
-.header-box .logo-text{
-  display: inline-block;
-  line-height: 50px;
-  margin-left: 10px;
-  font-weight: bold;
+
+.header-box .logo-text {
+  font-weight: normal;
+  font-size: 18px;
 }
+
+.header-box .header-menu {
+  flex: 1;
+  margin: auto 20px;
+}
+
 .userInfo-box {
-  float: right;
-  color: #777676;
-  margin-right: 30px;
-  line-height: 50px;
+  margin-right: 20px;
 }
 </style>

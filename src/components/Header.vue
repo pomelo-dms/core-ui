@@ -88,6 +88,9 @@ function backMain() {
 
 <style scoped>
 .header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 50px;
   color: #fff;
@@ -95,29 +98,21 @@ function backMain() {
 }
 
 .header-box .logo-img {
-  display: inline-block;
-  float: left;
-  height: 50%;
-  margin-left: 6px;
-  vertical-align: middle;
+  width: 30px;
+  margin: auto 10px;
 }
 
 .header-box .logo-text {
-  float: left;
-  line-height: 50px;
-  font-size: 20px;
-  margin-left: 6px;
+  font-weight: normal;
+  font-size: 18px;
 }
 
 .header-box .header-menu {
-  float: left;
-  margin-left: 100px;
+  flex: 1;
+  margin: auto 20px;
 }
 
 .userInfo-box {
-  float: right;
-  color: #777676;
-  margin-right: 30px;
-  line-height: 50px;
+  margin-right: 20px;
 }
 </style>

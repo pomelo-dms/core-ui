@@ -4,6 +4,12 @@
       :load="loadNode"
       lazy
       node-key="nodeKey">
+    <template #default="{ node, data }">
+      <el-icon>
+        <component :is="data.icon"></component>
+      </el-icon>
+      <span>{{ node.label }}</span>
+    </template>
   </el-tree>
 </template>
 
@@ -18,7 +24,8 @@ onMounted(() => {
 
 async function loadLevel0(resolve) {
   const res = await mysqlApi.getTreeLevel0({dataSourceId: props.dataSourceId})
-  return resolve(res.data)
+  let arr = initTreeData(Array.from(res.data))
+  return resolve(arr)
 }
 
 async function loadLevel1(node, resolve) {
@@ -26,7 +33,8 @@ async function loadLevel1(node, resolve) {
     dataSourceId: props.dataSourceId,
     databaseName: node.label
   })
-  return resolve(res.data)
+  let arr = initTreeData(Array.from(res.data))
+  return resolve(arr)
 }
 
 function loadNode(node, resolve) {
@@ -45,6 +53,21 @@ const defaultProps = {
   children: 'children',
   isLeaf: 'leaf',
   icon: 'Plus'
+}
+const initTreeData = (arr) => {
+  arr.forEach(n => {
+    if (n.nodeKey.startsWith('1-1-db')) {
+      console.log('数据库')
+      n.icon = 'List'
+    } else if (n.nodeKey.startsWith('2-1-t')) {
+      n.icon = 'Calendar'
+    } else if (n.nodeKey.startsWith('2-1-v')) {
+      n.icon = 'Picture'
+    } else if (n.nodeKey.startsWith('2-1-p')) {
+      n.icon = 'Film'
+    }
+  })
+  return arr
 }
 </script>
 

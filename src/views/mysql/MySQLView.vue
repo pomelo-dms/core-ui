@@ -21,7 +21,7 @@
             <span style="text-decoration: underline"> {{ dbCount }} </span> 个
           </el-descriptions-item>
           <el-descriptions-item>
-            <el-button @click="collapseTree">折叠所有</el-button>
+            <el-button type="primary" @click="collapseTree1">折叠所有</el-button>
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -29,7 +29,19 @@
       <el-divider/>
       <!-- MySQL 树区域 -->
       <el-scrollbar class="mysql-aside-tree-box">
-        <MySQLTree ref="mysqlTree1" :data-source-id="dataSourceId"/>
+        <el-tree
+            ref="mysqlTree"
+            :props="defaultProps"
+            :load="loadNode"
+            lazy
+            node-key="nodeKey">
+          <template #default="{ node, data }">
+            <el-icon>
+              <component :is="data.icon"></component>
+            </el-icon>
+            <span style="margin-left: 5px">{{ node.label }}</span>
+          </template>
+        </el-tree>
       </el-scrollbar>
     </div>
 
@@ -48,10 +60,11 @@ import Header from "../../components/Header.vue";
 import {onMounted, ref} from "vue";
 import dataSourceApi from '../../utils/api/dataSource.js'
 import {useRoute} from "vue-router";
-import MySQLTree from "../../components/mysql/MySQLTree.vue";
+import mysqlApi from '../../utils/api/mysql.js'
+import {ElMessage} from "element-plus";
 
 const route = useRoute()
-// 当前数据源 id
+// 获取当前数据源 id
 const dataSourceId = ref(route.query.dataSourceId)
 
 const dataSourceInfo = ref({})
@@ -67,6 +80,109 @@ function getDataSourceInfo() {
       .then(res => {
         dataSourceInfo.value = res.data
       })
+}
+async function loadLevel0(resolve) {
+  const res = await mysqlApi.getTreeLevel0({dataSourceId: dataSourceId.value})
+  let arr = initTreeData(Array.from(res.data))
+  dbCount.value = arr.length
+  return resolve(arr)
+}
+
+async function loadLevel1(node, resolve) {
+  const res = await mysqlApi.getTreeLevel1({
+    dataSourceId: dataSourceId.value,
+    databaseName: node.label
+  })
+  let arr = initTreeData(Array.from(res.data))
+  return resolve(arr)
+}
+
+async function loadLevel2(node, resolve) {
+  const nodeKey = node.key + ''
+  // 展开表
+  if (nodeKey.startsWith('1-t')) {
+    const res = await mysqlApi.getTreeLevel2Table({
+      dataSourceId: dataSourceId.value,
+      databaseName: node.parent.label
+    })
+    let arr = initTreeData(Array.from(res.data))
+    return resolve(arr)
+  }
+  // 展开视图
+  if (nodeKey.startsWith('1-v')) {
+    const res = await mysqlApi.getTreeLevel2View({
+      dataSourceId: dataSourceId.value,
+      databaseName: node.parent.label
+    })
+    let arr = initTreeData(Array.from(res.data))
+    return resolve(arr)
+  }
+  // 展开存储过程
+  if (nodeKey.startsWith('1-p')) {
+    ElMessage.warning('存储过程查询未实现')
+    return resolve([])
+  }
+}
+
+function loadNode(node, resolve) {
+  //如果展开第一级节点，从后台加载一级节点列表
+  if (node.level === 0) {
+    loadLevel0(resolve);
+  }
+  //如果展开第二级节点，动态从后台加载下一级节点列表
+  if (node.level === 1) {
+    loadLevel1(node, resolve);
+  }
+  //如果展开第三级级节点，动态从后台加载下一级节点列表
+  if (node.level === 2) {
+    loadLevel2(node, resolve);
+  }
+}
+
+const defaultProps = {
+  label: 'labelName',
+  children: 'children',
+  isLeaf: 'leaf',
+}
+const initTreeData = (arr) => {
+  arr.forEach(n => {
+    const str = n.nodeKey.substring(0, 4)
+    switch (str) {
+      case '0-db':
+        n.icon = 'List'
+        break;
+      case '1-t-':
+        n.icon = 'Calendar'
+        break;
+      case '1-v-':
+        n.icon = 'Picture'
+        break;
+      case '1-p-':
+        n.icon = 'Film'
+        break;
+      case '2-t-':
+        n.icon = 'Pear'
+        break;
+      case '2-v-':
+        n.icon = 'Sugar'
+        break;
+      case '2-p-':
+        n.icon = 'Apple'
+        break;
+      default:
+        break
+    }
+  })
+  return arr
+}
+
+// 将 MYSQL 树全部折叠
+const mysqlTree = ref(null)
+function collapseTree1() {
+  let allNodes = mysqlTree.value.store._getAllNodes()
+  allNodes.forEach(node => {
+    node.expanded = false
+  })
 }
 </script>
 

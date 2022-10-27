@@ -1,16 +1,17 @@
 <template>
-  <el-tree
-      :props="defaultProps"
-      :load="loadNode"
-      lazy
-      node-key="nodeKey">
-    <template #default="{ node, data }">
-      <el-icon>
-        <component :is="data.icon"></component>
-      </el-icon>
-      <span style="margin-left: 5px">{{ node.label }}</span>
-    </template>
-  </el-tree>
+    <el-tree
+        ref="mysqlTree"
+        :props="defaultProps"
+        :load="loadNode"
+        lazy
+        node-key="nodeKey">
+      <template #default="{ node, data }">
+        <el-icon>
+          <component :is="data.icon"></component>
+        </el-icon>
+        <span style="margin-left: 5px">{{ node.label }}</span>
+      </template>
+    </el-tree>
 </template>
 
 <script setup>

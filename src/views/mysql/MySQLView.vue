@@ -21,16 +21,16 @@
             <span style="text-decoration: underline"> {{ dbCount }} </span> 个
           </el-descriptions-item>
           <el-descriptions-item>
-            <el-button>折叠所有</el-button>
+            <el-button @click="collapseTree">折叠所有</el-button>
           </el-descriptions-item>
         </el-descriptions>
       </div>
       <!-- 分割线区域 -->
       <el-divider/>
       <!-- MySQL 树区域 -->
-      <div class="mysql-aside-tree-box">
-        <MySQLTree :data-source-id="dataSourceId"/>
-      </div>
+      <el-scrollbar class="mysql-aside-tree-box">
+        <MySQLTree ref="mysqlTree1" :data-source-id="dataSourceId"/>
+      </el-scrollbar>
     </div>
 
     <!-- 分割竖线 -->
@@ -83,10 +83,20 @@ function getDataSourceInfo() {
   height: inherit;
 }
 
-.mysql-aside {
-  width: 300px;
-  height: inherit;
-  padding-left: 10px;
+.mysql-container .mysql-aside {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  height: calc(100vh - 50px - 20px);
+  padding-left: 5px;
+}
+
+.mysql-container .mysql-aside #mysql-aside-info {
+  height: 100px;
+}
+
+.mysql-aside .mysql-aside-tree-box {
+  /*flex: 1;*/
 }
 
 .mysql-main {

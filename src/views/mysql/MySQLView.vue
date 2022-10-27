@@ -31,6 +31,7 @@
       <el-scrollbar class="mysql-aside-tree-box">
         <el-tree
             ref="mysqlTree"
+            @node-contextmenu="rightClick"
             :props="defaultProps"
             :load="loadNode"
             lazy
@@ -174,6 +175,14 @@ const initTreeData = (arr) => {
     }
   })
   return arr
+}
+
+// 右键菜单
+function rightClick(event, data, node, target) {
+  console.log(event)
+  console.log(data)
+  console.log(node)
+  console.log(target)
 }
 
 // 将 MYSQL 树全部折叠

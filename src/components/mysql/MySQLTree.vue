@@ -43,7 +43,7 @@ async function loadLevel2(node, resolve) {
   console.log(nodeKey)
   // 展开表
   if (nodeKey.startsWith('1-t')) {
-    const res = await mysqlApi.getTreeLevel2({
+    const res = await mysqlApi.getTreeLevel2Table({
       dataSourceId: props.dataSourceId,
       databaseName: node.parent.label
     })
@@ -52,8 +52,12 @@ async function loadLevel2(node, resolve) {
   }
   // 展开视图
   if (nodeKey.startsWith('1-v')) {
-    ElMessage.warning('视图查询未实现')
-    return resolve([])
+    const res = await mysqlApi.getTreeLevel2View({
+      dataSourceId: props.dataSourceId,
+      databaseName: node.parent.label
+    })
+    let arr = initTreeData(Array.from(res.data))
+    return resolve(arr)
   }
   // 展开存储过程
   if (nodeKey.startsWith('1-p')) {

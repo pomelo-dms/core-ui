@@ -233,6 +233,7 @@ function rightClick(event, data, node, target) {
 
 // 右键菜单点击事件处理，value 为点击的 id
 function handleRightClick(value) {
+  // todo 根据 id 判断事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
   console.log(value)
 }
 

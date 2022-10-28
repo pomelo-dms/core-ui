@@ -31,6 +31,7 @@
       <el-scrollbar class="mysql-aside-tree-box">
         <el-tree
             ref="mysqlTree"
+            @node-click="menuVisible = false"
             @node-contextmenu="rightClick"
             :props="defaultProps"
             :load="loadNode"
@@ -44,7 +45,19 @@
           </template>
         </el-tree>
       </el-scrollbar>
+      <div :style="{'z-index': 9999, position: 'fixed',left: optionCardX + 'px',
+				top: optionCardY + 'px', width: '130px', background: 'white',
+				 'box-shadow': '2px 2px 14px rgba(0, 0, 0, .06), -2px -2px 4px rgba(0, 0, 0, .06)', 'text-align': 'center'}"
+           v-show="menuVisible"
+           id="rightClickMenuDom"
+      >
+        <template v-for="m in menuData">
+          <a href="#" class="menu-button" :id="m.id" @click="handleRightClick(m.id)">{{ m.title }}</a>
+          <el-divider v-if="m.divider" style="width:100px; margin: 5px 15px"></el-divider>
+        </template>
+      </div>
     </div>
+
 
     <!-- 分割竖线 -->
     <div class="mysql-border"></div>
@@ -58,11 +71,12 @@
 
 <script setup>
 import Header from "../../components/Header.vue";
-import {onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import dataSourceApi from '../../utils/api/dataSource.js'
 import {useRoute} from "vue-router";
 import mysqlApi from '../../utils/api/mysql.js'
 import {ElMessage} from "element-plus";
+import rightMenu from "../../utils/mysql/rightClickMenu.js";
 
 const route = useRoute()
 // 获取当前数据源 id
@@ -73,6 +87,14 @@ const dbCount = ref(0)
 
 onMounted(() => {
   getDataSourceInfo()
+  document.addEventListener('click', (e) => {
+    // if (e.target.id !== 'rightClickMenuDom') {
+      menuVisible.value = false
+    // }
+  })
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('click', () => {}, true)
 })
 
 // 获取数据源信息
@@ -82,6 +104,7 @@ function getDataSourceInfo() {
         dataSourceInfo.value = res.data
       })
 }
+
 async function loadLevel0(resolve) {
   const res = await mysqlApi.getTreeLevel0({dataSourceId: dataSourceId.value})
   let arr = initTreeData(Array.from(res.data))
@@ -178,21 +201,52 @@ const initTreeData = (arr) => {
 }
 
 // 右键菜单
+const menuVisible = ref(false)
+const optionCardX = ref(null)
+const optionCardY = ref(null)
+let menuData = ref()
+// 右键打开菜单
 function rightClick(event, data, node, target) {
-  console.log(event)
-  console.log(data)
-  console.log(node)
-  console.log(target)
+  menuVisible.value = false
+  optionCardX.value = event.x + 10
+  optionCardY.value = event.y
+
+  const nodeKey = data.nodeKey
+
+  if (nodeKey.includes('0-db')) {
+    menuData.value = rightMenu.level0_db
+  } else if (nodeKey.includes('1-t')) {
+    menuData.value = rightMenu.level1_t
+  } else if (nodeKey.includes('1-v')) {
+    menuData.value = rightMenu.level1_v
+  } else if (nodeKey.includes('1-p')) {
+    menuData.value = rightMenu.level1_p
+  } else if (nodeKey.includes('2-t')) {
+    menuData.value = rightMenu.level2_t
+  } else if (nodeKey.includes('2-v')) {
+    menuData.value = rightMenu.level2_v
+  } else if (nodeKey.includes('2-p')) {
+    menuData.value = rightMenu.level2_p
+  }
+  menuVisible.value = true  // 展示右键菜单
+}
+
+// 右键菜单点击事件处理，value 为点击的 id
+function handleRightClick(value) {
+  console.log(value)
 }
 
 // 将 MYSQL 树全部折叠
 const mysqlTree = ref(null)
+
 function collapseTree1() {
   let allNodes = mysqlTree.value.store._getAllNodes()
   allNodes.forEach(node => {
     node.expanded = false
   })
 }
+
+
 </script>
 
 <style scoped>
@@ -224,6 +278,19 @@ function collapseTree1() {
   /*flex: 1;*/
 }
 
+.menu-button {
+  display: inline-block;
+  width: 100%;
+  padding: 6px 0;
+  font-size: 12px;
+  text-decoration: none;
+  color: black;
+}
+
+.menu-button:hover {
+  background-color: #99a9bf;
+}
+
 .mysql-main {
   flex: 1;
   height: inherit;
@@ -242,7 +309,7 @@ ul li {
   padding-left: 30px;
 }
 
-a {
+ul a {
   display: inline-block;
   line-height: 50px;
   color: white;
@@ -250,7 +317,7 @@ a {
   font-size: 16px;
 }
 
-a:hover {
+ul a:hover {
   color: red;
 }
 </style>

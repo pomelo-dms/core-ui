@@ -52,31 +52,68 @@
            id="rightClickMenuDom"
       >
         <template v-for="m in menuData">
-          <a href="#" class="menu-button" :id="m.id" @click="handleRightClick(m.id)">{{ m.title }}</a>
+          <el-button class="menu-button"
+                     :id="m.id"
+                     @click="handleRightClick(m.id, m.type)">
+            {{ m.title }}
+          </el-button>
           <el-divider v-if="m.divider" style="width:100px; margin: 5px 15px"></el-divider>
         </template>
       </div>
+      <el-dialog v-model="createDatabaseDialogVisible" title="创建数据库">
+        <el-form :model="databaseCreate">
+          <el-form-item label="数据库名称" label-width="120">
+            <el-input v-model="databaseCreate.databaseName" autocomplete="off"/>
+          </el-form-item>
+          <el-form-item label="Zones" label-width="120">
+            <el-select v-model="databaseCreate.region" placeholder="Please select a zone">
+              <el-option label="Zone No.1" value="shanghai"/>
+              <el-option label="Zone No.2" value="beijing"/>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="createDatabaseDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="createDatabaseDialogVisible = false">
+          确认
+        </el-button>
+      </span>
+        </template>
+      </el-dialog>
     </div>
-
 
     <!-- 分割竖线 -->
     <div class="mysql-border"></div>
 
     <!-- MySQL tab 页主体操作区域-->
     <div class="mysql-main">
-      <h1>首页</h1>
+      <el-tabs type="card" v-model="tabName">
+        <el-tab-pane
+            :key="index"
+            :label="item.label"
+            :name="item.name"
+            :closable="item.closable"
+            v-for="(item, index) in tabDataList">
+          <KeepAlive>
+            <component :is="item.content"></component>
+          </KeepAlive>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 
 <script setup>
 import Header from "../../components/Header.vue";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {markRaw, onBeforeUnmount, onMounted, ref} from "vue";
 import dataSourceApi from '../../utils/api/dataSource.js'
 import {useRoute} from "vue-router";
 import mysqlApi from '../../utils/api/mysql.js'
 import {ElMessage} from "element-plus";
 import rightMenu from "../../utils/mysql/rightClickMenu.js";
+
+import MySQLWelcome from './MySQLWelcome.vue'
 
 const route = useRoute()
 // 获取当前数据源 id
@@ -89,12 +126,13 @@ onMounted(() => {
   getDataSourceInfo()
   document.addEventListener('click', (e) => {
     // if (e.target.id !== 'rightClickMenuDom') {
-      menuVisible.value = false
+    menuVisible.value = false
     // }
   })
 })
 onBeforeUnmount(() => {
-  window.removeEventListener('click', () => {}, true)
+  window.removeEventListener('click', () => {
+  }, true)
 })
 
 // 获取数据源信息
@@ -205,6 +243,7 @@ const menuVisible = ref(false)
 const optionCardX = ref(null)
 const optionCardY = ref(null)
 let menuData = ref()
+
 // 右键打开菜单
 function rightClick(event, data, node, target) {
   menuVisible.value = false
@@ -212,6 +251,9 @@ function rightClick(event, data, node, target) {
   optionCardY.value = event.y
 
   const nodeKey = data.nodeKey
+
+  // 设置当前节点为选中状体
+  mysqlTree.value.setCurrentKey(nodeKey)
 
   if (nodeKey.includes('0-db')) {
     menuData.value = rightMenu.level0_db
@@ -231,15 +273,142 @@ function rightClick(event, data, node, target) {
   menuVisible.value = true  // 展示右键菜单
 }
 
+const createDatabaseDialogVisible = ref(false)
+const databaseCreate = ref({})
+
 // 右键菜单点击事件处理，value 为点击的 id
-function handleRightClick(value) {
-  // todo 根据 id 判断事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
-  console.log(value)
+function handleRightClick(value, type) {
+  // todo 根据 value 和 type 判断出事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
+  console.log(mysqlTree.value.getCurrentKey());
+  switch (type) {
+    case 1:  // 数据库操作
+      switch (value) {
+        case 'createDatabase':
+          createDatabaseDialogVisible.value = true
+          break
+        case 'renameDatabase':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'dropDatabase':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'exportData':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'exportTableStructure':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'openSQLConsole':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'refreshDatabase':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'databaseInfo':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 2:  // 表目录操作
+      switch (value) {
+        case 'createTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 3:  // 视图目录操作
+      switch (value) {
+        case 'createView':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 4:  // 存储过程目录操作
+      switch (value) {
+        case 'createProcedure':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 5:  // 表操作
+      switch (value) {
+        case 'openTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'importData':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'exportData':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'createTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'copyTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'alterTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'dropTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'truncationTable':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'tableInfo':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'tableSqlScript':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 6:  // 视图操作
+      switch (value) {
+        case 'showViewData':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'exportViewData':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'createView':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'updateView':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'dropView':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'viewInfo':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+    case 7:  // 存储过程操作
+      switch (value) {
+        case 'showProcedure':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'createProcedure':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'dropProcedure':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'procedureInfo':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+      }
+      break
+  }
 }
 
-// 将 MYSQL 树全部折叠
+// 获取树形 dom
 const mysqlTree = ref(null)
 
+// 将 MYSQL 树全部折叠
 function collapseTree1() {
   let allNodes = mysqlTree.value.store._getAllNodes()
   allNodes.forEach(node => {
@@ -247,7 +416,15 @@ function collapseTree1() {
   })
 }
 
-
+// 标签操作相关
+const tabName = ref('1')
+const tabDataList = ref([])
+tabDataList.value.push({
+  label: '首页',//tabs页的名称
+  name: '1',
+  content: markRaw(MySQLWelcome),//对应组件名称
+  closable: false// 是否可以关闭，false是不可以，true是可以关闭
+})
 </script>
 
 <style scoped>
@@ -282,7 +459,9 @@ function collapseTree1() {
 .menu-button {
   display: inline-block;
   width: 100%;
-  padding: 6px 0;
+  margin: 0;
+  padding: 0;
+  border: none;
   font-size: 12px;
   text-decoration: none;
   color: black;

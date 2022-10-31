@@ -88,7 +88,7 @@
 
     <!-- MySQL tab 页主体操作区域-->
     <div class="mysql-main">
-      <el-tabs type="card" v-model="tabName">
+      <el-tabs type="card" v-model="tabName" @tab-remove="closeTab">
         <el-tab-pane
             :key="index"
             :label="item.label"
@@ -96,7 +96,7 @@
             :closable="item.closable"
             v-for="(item, index) in tabDataList">
           <KeepAlive>
-            <component :is="item.content"></component>
+            <component :is="item.content" :nodeKey="currentRightClickNodeKey"></component>
           </KeepAlive>
         </el-tab-pane>
       </el-tabs>
@@ -114,6 +114,7 @@ import {ElMessage} from "element-plus";
 import rightMenu from "../../utils/mysql/rightClickMenu.js";
 
 import MySQLWelcome from './MySQLWelcome.vue'
+import MySQLTableCreateView from './MySQLTableCreateView.vue'
 
 const route = useRoute()
 // 获取当前数据源 id
@@ -273,13 +274,15 @@ function rightClick(event, data, node, target) {
   menuVisible.value = true  // 展示右键菜单
 }
 
+// 数据库操作相关数据
 const createDatabaseDialogVisible = ref(false)
 const databaseCreate = ref({})
 
 // 右键菜单点击事件处理，value 为点击的 id
+const currentRightClickNodeKey = ref('')
 function handleRightClick(value, type) {
   // todo 根据 value 和 type 判断出事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
-  console.log(mysqlTree.value.getCurrentKey());
+  currentRightClickNodeKey.value = mysqlTree.value.getCurrentKey()
   switch (type) {
     case 1:  // 数据库操作
       switch (value) {
@@ -290,6 +293,15 @@ function handleRightClick(value, type) {
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'dropDatabase':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'createTable':
+          addTable('创建表', MySQLTableCreateView)
+          break
+        case 'createView':
+          ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'createProcedure':
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'exportData':
@@ -312,7 +324,10 @@ function handleRightClick(value, type) {
     case 2:  // 表目录操作
       switch (value) {
         case 'createTable':
-          ElMessage.warning(`【${value}】功能未实现`)
+          addTable('创建表', MySQLTableCreateView)
+          break
+        case 'refreshTable':
+          ElMessage.warning(`${value} 功能未实现`)
           break
       }
       break
@@ -321,12 +336,18 @@ function handleRightClick(value, type) {
         case 'createView':
           ElMessage.warning(`【${value}】功能未实现`)
           break
+        case 'refreshView':
+          ElMessage.warning(`${value} 功能未实现`)
+          break
       }
       break
     case 4:  // 存储过程目录操作
       switch (value) {
         case 'createProcedure':
           ElMessage.warning(`【${value}】功能未实现`)
+          break
+        case 'refreshProcedure':
+          ElMessage.warning(`${value} 功能未实现`)
           break
       }
       break
@@ -417,14 +438,57 @@ function collapseTree1() {
 }
 
 // 标签操作相关
-const tabName = ref('1')
-const tabDataList = ref([])
-tabDataList.value.push({
-  label: '首页',//tabs页的名称
+const tabName = ref('1')  // 当前激活的 tab 页名称,注意这个名称不是标签页的标题,它类似于id,
+const tabIndex = ref(1)  // 用于构造 tab 页名称的,没实际意义
+// 标签页列表
+const tabDataList = ref([{
+  label: '首页',
   name: '1',
-  content: markRaw(MySQLWelcome),//对应组件名称
-  closable: false// 是否可以关闭，false是不可以，true是可以关闭
-})
+  content: markRaw(MySQLWelcome),
+  closable: false
+}])
+
+/**
+ * 添加标签页
+ * @param label  标签页的 title
+ * @param component  标签页内容组件
+ * @param closable 是否可关闭
+ */
+function addTable(label, component, closable = true) {
+  if (tabDataList.value.length >= 10) {
+    ElMessage.warning('您打开的标签页过多,请先关闭不需要的标签页')
+    return
+  }
+  const newTabName = ++tabIndex.value + ''
+  tabDataList.value.push({
+    label: label, //tab 页的名称
+    name: newTabName,  // 标签 name,与 tab 的 v-model 绑定,为当前展示的标签页
+    content: markRaw(component),  // 标签内容组件
+    closable: closable  // 是否可关闭
+  })
+  tabName.value = newTabName
+}
+
+/**
+ * 删除标签页
+ * @param targetName 要删除的标签页的 name
+ */
+function closeTab(targetName) {
+  let tabs = tabDataList.value;
+  let activeName = tabName.value;
+  if (activeName === targetName) {
+    tabs.forEach((tab, index) => {
+      if (tab.name === targetName) {
+        let nextTab = tabs[index + 1] || tabs[index - 1];
+        if (nextTab) {
+          activeName = nextTab.name;
+        }
+      }
+    });
+  }
+  tabName.value = activeName;
+  tabDataList.value = tabs.filter(tab => tab.name !== targetName);
+}
 </script>
 
 <style scoped>

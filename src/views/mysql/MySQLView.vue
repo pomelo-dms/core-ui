@@ -61,27 +61,7 @@
           <el-divider v-if="m.divider" style="width:100px; margin: 5px 15px"></el-divider>
         </template>
       </div>
-      <el-dialog v-model="createDatabaseDialogVisible" title="创建数据库">
-        <el-form :model="databaseCreate">
-          <el-form-item label="数据库名称" label-width="120">
-            <el-input v-model="databaseCreate.databaseName" autocomplete="off"/>
-          </el-form-item>
-          <el-form-item label="Zones" label-width="120">
-            <el-select v-model="databaseCreate.region" placeholder="Please select a zone">
-              <el-option label="Zone No.1" value="shanghai"/>
-              <el-option label="Zone No.2" value="beijing"/>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="createDatabaseDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="createDatabaseDialogVisible = false">
-          确认
-        </el-button>
-      </span>
-        </template>
-      </el-dialog>
+      <CreateDatabase ref="createDatabase" :data-source-id="dataSourceId"/>
     </div>
 
     <!-- 分割竖线 -->
@@ -116,6 +96,7 @@ import rightMenu from "../../utils/mysql/rightClickMenu.js";
 
 import MySQLWelcome from './MySQLWelcome.vue'
 import MySQLTableCreateView from './MySQLTableCreateView.vue'
+import CreateDatabase from "../../components/mysql/CreateDatabase.vue";
 
 const route = useRoute()
 // 获取当前数据源 id
@@ -280,13 +261,10 @@ function rightClick(event, data, node, target) {
   menuVisible.value = true  // 展示右键菜单
 }
 
-// 数据库操作相关数据
-const createDatabaseDialogVisible = ref(false)
-const databaseCreate = ref({})
-
 // 右键菜单点击事件处理，value 为点击的 id
 const currentRightClickNodeKey = ref('')
 
+const createDatabase = ref(null)
 function handleRightClick(value, type) {
   // todo 根据 value 和 type 判断出事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
   currentRightClickNodeKey.value = mysqlTree.value.getCurrentKey()
@@ -294,7 +272,7 @@ function handleRightClick(value, type) {
     case 1:  // 数据库操作
       switch (value) {
         case 'createDatabase':
-          createDatabaseDialogVisible.value = true
+          createDatabase.value.isShow = true
           break
         case 'renameDatabase':
           ElMessage.warning(`【${value}】功能未实现`)
@@ -439,6 +417,7 @@ const mysqlTree = ref(null)
 // 将 MYSQL 树全部折叠
 function collapseTree1() {
   let allNodes = mysqlTree.value.store._getAllNodes()
+  mysqlTree.value.store._
   allNodes.forEach(node => {
     node.expanded = false
   })

@@ -31,7 +31,8 @@ service.interceptors.response.use(
     response => {
         if (response.data.code === -1) { // 未登录或 token 过期
             ElMessage.error(response.data.msg)
-            window.sessionStorage.setItem('token', '')
+            window.localStorage.setItem('token', '')
+            router.push('/login')
             return Promise.reject(response.data);
         } else if (response.data.code === 1) {  // 服务出错了
             ElMessage.error(response.data.msg)

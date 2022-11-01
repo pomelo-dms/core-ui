@@ -45,11 +45,12 @@
           </template>
         </el-tree>
       </el-scrollbar>
-      <div :style="{'z-index': 9999, position: 'fixed',left: optionCardX + 'px',
+      <div :style="{'z-index': 9999, position: 'absolute',left: optionCardX + 'px',
 				top: optionCardY + 'px', width: '130px', background: 'white',
 				 'box-shadow': '2px 2px 14px rgba(0, 0, 0, .06), -2px -2px 4px rgba(0, 0, 0, .06)', 'text-align': 'center'}"
            v-show="menuVisible"
            id="rightClickMenuDom"
+           ref="rightClickMenuDom"
       >
         <template v-for="m in menuData">
           <el-button class="menu-button"
@@ -130,6 +131,10 @@ onMounted(() => {
     menuVisible.value = false
     // }
   })
+  window.oncontextmenu = function (e) {
+    //取消默认的浏览器自带右键
+    e.preventDefault();
+  }
 })
 onBeforeUnmount(() => {
   window.removeEventListener('click', () => {
@@ -248,7 +253,8 @@ let menuData = ref()
 // 右键打开菜单
 function rightClick(event, data, node, target) {
   menuVisible.value = false
-  optionCardX.value = event.x + 10
+
+  optionCardX.value = event.x
   optionCardY.value = event.y
 
   const nodeKey = data.nodeKey
@@ -280,6 +286,7 @@ const databaseCreate = ref({})
 
 // 右键菜单点击事件处理，value 为点击的 id
 const currentRightClickNodeKey = ref('')
+
 function handleRightClick(value, type) {
   // todo 根据 value 和 type 判断出事件类型，根据当前选中的树节点获取出自己的节点 和 父节点
   currentRightClickNodeKey.value = mysqlTree.value.getCurrentKey()

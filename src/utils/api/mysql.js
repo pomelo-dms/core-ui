@@ -27,5 +27,14 @@ export default {
      */
     createDatabase(data) {
         return axios.post('/database', data)
+    },
+    // 删除数据库
+    dropDatabase(databaseName,params){
+        return axios.delete('/database/'+ databaseName,params)
+    },
+
+    //对象信息
+    databaseInfo(databaseName,params){
+        return axios.get('/database/'+ databaseName,params)
     }
 }

@@ -1,7 +1,7 @@
 const rightMenu = {
     level0_db: [
         {id: 'createDatabase', type: 1, title: '新建数据库', divider: false,},
-        {id: 'renameDatabase', type: 1, title: '重命名', divider: false,},
+        {id: 'updateDatabase', type: 1, title: '修改数据库', divider: false,},
         {id: 'dropDatabase', type: 1, title: '删除数据库', divider: true,},
         {id: 'createTable', type: 1, title: '创建表', divider: false,},
         {id: 'createView', type: 1, title: '创建视图', divider: false,},
@@ -18,11 +18,11 @@ const rightMenu = {
     ],
     level1_v: [
         {id: 'createView', type: 3, title: '新建视图', divider: false,},
-        {id: 'refreshView', type: 2, title: '刷新', divider: false,},
+        {id: 'refreshView', type: 3, title: '刷新', divider: false,},
     ],
     level1_p: [
         {id: 'createProcedure', type: 4, title: '新建存储过程', divider: false,},
-        {id: 'refreshProcedure', type: 2, title: '刷新', divider: false,},
+        {id: 'refreshProcedure', type: 4, title: '刷新', divider: false,},
     ],
     level2_t: [
         {id: 'openTable', type: 5, title: '打开表', divider: false,},

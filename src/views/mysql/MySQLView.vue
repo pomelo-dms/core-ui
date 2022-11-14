@@ -77,6 +77,7 @@
             :closable="item.closable"
             v-for="(item, index) in tabDataList">
           <KeepAlive>
+           
             <component :is="item.content" :nodeKey="currentRightClickNodeKey"></component>
           </KeepAlive>
         </el-tab-pane>
@@ -91,11 +92,15 @@ import {markRaw, onBeforeUnmount, onMounted, ref} from "vue";
 import dataSourceApi from '../../utils/api/dataSource.js'
 import {useRoute} from "vue-router";
 import mysqlApi from '../../utils/api/mysql.js'
-import {ElMessage} from "element-plus";
+import {ElMessage,ElMessageBox} from "element-plus";
 import rightMenu from "../../utils/mysql/rightClickMenu.js";
+import emitter from '../../utils/bus.js'
+
 
 import MySQLWelcome from './MySQLWelcome.vue'
+import MySQLDataInfo from './MySQLDataInfo.vue'
 import MySQLTableCreateView from './MySQLTableCreateView.vue'
+
 import CreateDatabase from "../../components/mysql/CreateDatabase.vue";
 
 const route = useRoute()
@@ -104,6 +109,9 @@ const dataSourceId = ref(route.query.dataSourceId)
 
 const dataSourceInfo = ref({})
 const dbCount = ref(0)
+
+
+
 
 onMounted(() => {
   getDataSourceInfo()
@@ -120,6 +128,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('click', () => {
   }, true)
+
 })
 
 // 获取数据源信息
@@ -230,10 +239,14 @@ const menuVisible = ref(false)
 const optionCardX = ref(null)
 const optionCardY = ref(null)
 let menuData = ref()
+let currentDatabaseName = ref()
 
 // 右键打开菜单
 function rightClick(event, data, node, target) {
+
   menuVisible.value = false
+  currentDatabaseName = data.labelName
+ 
 
   optionCardX.value = event.x
   optionCardY.value = event.y
@@ -278,7 +291,31 @@ function handleRightClick(value, type) {
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'dropDatabase':
-          ElMessage.warning(`【${value}】功能未实现`)
+        ElMessageBox.confirm(
+       '确认删除么',
+       '提示',
+       {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+      )
+      .then(() => {
+        mysqlApi.dropDatabase(currentDatabaseName,{dataSourceId: dataSourceId.value})
+        .then(res => {
+        ElMessage({
+          type: 'success',
+          message: '删除成功',
+        })
+      })
+       
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Delete canceled',
+        })
+      })
           break
         case 'createTable':
           addTable('创建表', MySQLTableCreateView)
@@ -302,7 +339,8 @@ function handleRightClick(value, type) {
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'databaseInfo':
-          ElMessage.warning(`【${value}】功能未实现`)
+          addTable('对象信息', MySQLDataInfo)
+          emitter.emit('currentDatabaseName',currentDatabaseName)
           break
       }
       break
@@ -550,4 +588,10 @@ ul a {
 ul a:hover {
   color: red;
 }
+/* 树形菜单 子节点过长展示滚动条  el-tree-node是个div 块级元素 */
+::v-deep .el-tree > .el-tree-node {
+  display: inline-block;
+  min-width: 100%;
+}
+
 </style>

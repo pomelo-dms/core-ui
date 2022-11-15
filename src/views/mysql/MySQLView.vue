@@ -46,7 +46,7 @@
         </el-tree>
       </el-scrollbar>
       <div :style="{'z-index': 9999, position: 'absolute',left: optionCardX + 'px',
-				top: optionCardY + 'px', width: '130px', background: 'white',
+				top:optionCardY + 'px', width: '130px', background: 'white',
 				 'box-shadow': '2px 2px 14px rgba(0, 0, 0, .06), -2px -2px 4px rgba(0, 0, 0, .06)', 'text-align': 'center'}"
            v-show="menuVisible"
            id="rightClickMenuDom"
@@ -78,7 +78,7 @@
             v-for="(item, index) in tabDataList">
           <KeepAlive>
            
-            <component :is="item.content" :nodeKey="currentRightClickNodeKey"></component>
+            <component :is="item.content"  :nodeKey="currentRightClickNodeKey"></component>
           </KeepAlive>
         </el-tab-pane>
       </el-tabs>
@@ -109,9 +109,6 @@ const dataSourceId = ref(route.query.dataSourceId)
 
 const dataSourceInfo = ref({})
 const dbCount = ref(0)
-
-
-
 
 onMounted(() => {
   getDataSourceInfo()
@@ -239,23 +236,22 @@ const menuVisible = ref(false)
 const optionCardX = ref(null)
 const optionCardY = ref(null)
 let menuData = ref()
-let currentDatabaseName = ref()
+let currentDatabaseName = ref('')
 
 // 右键打开菜单
 function rightClick(event, data, node, target) {
-
   menuVisible.value = false
   currentDatabaseName = data.labelName
- 
-
+  let currentheight = document.body.scrollHeight-event.y-300//当前浏览器内容高度-元素距离顶部距离-元素本身高度
   optionCardX.value = event.x
-  optionCardY.value = event.y
-
+  if(currentheight<0){
+    optionCardY.value = document.body.scrollHeight-300
+  }else{
+    optionCardY.value = event.y
+  }
   const nodeKey = data.nodeKey
-
   // 设置当前节点为选中状体
   mysqlTree.value.setCurrentKey(nodeKey)
-
   if (nodeKey.includes('0-db')) {
     menuData.value = rightMenu.level0_db
   } else if (nodeKey.includes('1-t')) {
@@ -340,7 +336,7 @@ function handleRightClick(value, type) {
           break
         case 'databaseInfo':
           addTable('对象信息', MySQLDataInfo)
-          emitter.emit('currentDatabaseName',currentDatabaseName)
+          emitter.emit('currentDatabaseName', currentDatabaseName)
           break
       }
       break

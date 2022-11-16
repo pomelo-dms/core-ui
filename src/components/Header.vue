@@ -17,27 +17,48 @@
           <el-dropdown-menu>
             <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
             <el-dropdown-item command="changePwd">修改密码</el-dropdown-item>
+            <el-dropdown-item command="changeTheme">
+              切换主题
+           <el-switch  v-model="currentSkinName" active-value="darkTheme" inactive-value="defaultTheme"  @change="switchTheme"/>
+            </el-dropdown-item>
             <el-dropdown-item command="changeUser" divided>切换用户</el-dropdown-item>
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
-  </div>
+   
+      <div>
+       
+      </div>
+    </div>
+    
 </template>
 
 <script setup>
+import themes from '../utils/theme/index'
+import {colorMix} from "../utils/theme/tool"
 import {CaretBottom} from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from 'element-plus'
+import { ref } from '@vue/reactivity';
 // import {useDark, useToggle} from '@vueuse/core'
 //
 // const isDark = useDark()
 // const toggleDark = useToggle(isDark)
+let currentSkinName = ref(true)
+let   themeColorObj= {
+        defaultTheme: {
+          title: '浅色主题'
+        },
+        darkTheme: {
+          title: '深色主题'
+        }
+      }
+ let  themeObj={}
 
 const currentUser = JSON.parse(window.localStorage.getItem('currentUser'))
 const router = useRouter()
-
 function handleCommand(cmd) {
   switch (cmd) {
     case 'logout':
@@ -72,12 +93,37 @@ function handleCommand(cmd) {
     case 'changePwd':
       ElMessage.warning('功能待实现…')
       break;
-    default:
+     
+      default:
       ElMessage.error('错了，出大错了…')
       break;
   }
 
 }
+function switchTheme(type){
+      // themes 对象包含 defaultTheme、darkTheme 两个属性即默认主题与深色主题
+      currentSkinName = type || 'darkTheme'
+      themeObj = themes[currentSkinName]
+      getsTheColorScale()
+      // 设置css 变量
+      Object.keys(themeObj).map(item => {
+        document.documentElement.style.setProperty(item,themeObj[item])
+      })
+}
+function getsTheColorScale() {
+      const colorList = ['primary', 'success', 'warning', 'danger', 'error', 'info']
+      const prefix = '--el-color-'
+      colorList.map(colorItem => {
+        for (let i = 1; i < 10; i += 1) {
+          if (i === 2) {
+            // todo 深色变量生成未完成 以基本色设置
+            themeObj[`${prefix}${colorItem}-dark-${2}`] = colorMix(themeObj[`${prefix}black`], themeObj[`${prefix}${colorItem}`], 1)
+          } else {
+            themeObj[`${prefix}${colorItem}-light-${10 - i}`] = colorMix(themeObj[`${prefix}white`],themeObj[`${prefix}${colorItem}`], i * 0.1)
+          }
+        }
+      })
+    }
 
 function backMain() {
   router.push({

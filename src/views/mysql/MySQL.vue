@@ -77,7 +77,6 @@
             :closable="item.closable"
             v-for="(item, index) in tabDataList">
           <KeepAlive>
-           
             <component :is="item.content"  :nodeKey="currentRightClickNodeKey"></component>
           </KeepAlive>
         </el-tab-pane>
@@ -97,10 +96,9 @@ import rightMenu from "../../utils/mysql/rightClickMenu.js";
 import emitter from '../../utils/bus.js'
 
 
-import MySQLWelcome from './Welcome.vue'
-import MySQLDataInfo from './Info.vue'
-import MySQLTableCreateView from './TableCreate.vue'
-
+import Welcome from './Welcome.vue'
+import Info from './Info.vue'
+import TableCreate from './TableCreate.vue'
 import CreateDatabase from "./CreateDatabase.vue";
 
 const route = useRoute()
@@ -314,7 +312,7 @@ function handleRightClick(value, type) {
       })
           break
         case 'createTable':
-          addTable('创建表', MySQLTableCreateView)
+          addTable('创建表', TableCreate)
           break
         case 'createView':
           ElMessage.warning(`【${value}】功能未实现`)
@@ -335,7 +333,7 @@ function handleRightClick(value, type) {
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'databaseInfo':
-          addTable('对象信息', MySQLDataInfo)
+          addTable('对象信息', Info)
           emitter.emit('currentDatabaseName', currentDatabaseName)
           break
       }
@@ -343,7 +341,7 @@ function handleRightClick(value, type) {
     case 2:  // 表目录操作
       switch (value) {
         case 'createTable':
-          addTable('创建表', MySQLTableCreateView)
+          addTable('创建表', TableCreate)
           break
         case 'refreshTable':
           ElMessage.warning(`${value} 功能未实现`)
@@ -464,7 +462,7 @@ const tabIndex = ref(1)  // 用于构造 tab 页名称的,没实际意义
 const tabDataList = ref([{
   label: '首页',
   name: '1',
-  content: markRaw(MySQLWelcome),
+  content: markRaw(Welcome),
   closable: false
 }])
 

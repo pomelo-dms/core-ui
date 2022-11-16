@@ -97,11 +97,11 @@ import rightMenu from "../../utils/mysql/rightClickMenu.js";
 import emitter from '../../utils/bus.js'
 
 
-import MySQLWelcome from './MySQLWelcome.vue'
-import MySQLDataInfo from './MySQLDataInfo.vue'
-import MySQLTableCreateView from './MySQLTableCreateView.vue'
+import MySQLWelcome from './Welcome.vue'
+import MySQLDataInfo from './Info.vue'
+import MySQLTableCreateView from './TableCreate.vue'
 
-import CreateDatabase from "../../components/mysql/CreateDatabase.vue";
+import CreateDatabase from "./CreateDatabase.vue";
 
 const route = useRoute()
 // 获取当前数据源 id

@@ -3,24 +3,24 @@ import {ElMessage} from "element-plus";
 
 const routes = [
     {path: '/', redirect: 'login'},
-    {path: '/login', name: 'LoginView', component: () => import('../views/LoginView.vue')},
+    {path: '/login', name: 'LoginView', component: () => import('../views/Login.vue')},
     {
         path: '/main',
         name: 'MainView',
         redirect: 'welcome',
-        component: () => import('../views/MainView.vue'),
+        component: () => import('../views/Main.vue'),
         children: [
             {
                 path: '/welcome',
                 name: 'WelcomeView',
                 meta: {title: '首页', hasChildren: false, icon: 'HomeFilled'},
-                component: () => import('../views/WelcomeView.vue')
+                component: () => import('../views/Welcome.vue')
             },
             {
                 path: '/dataSource',
                 name: 'DataSourceView',
                 meta: {title: '数据源管理', hasChildren: false, icon: 'Grid'},
-                component: () => import('../views/dataSource/DataSourceView.vue')
+                component: () => import('../views/dataSource/DataSource.vue')
             },
             {
                 path: '/sys',
@@ -30,25 +30,25 @@ const routes = [
                         path: '/user',
                         name: 'UserView',
                         meta: {title: '用户管理', hasChildren: false, icon: 'UserFilled'},
-                        component: () => import('../views/sys/UserView.vue')
+                        component: () => import('../views/sys/User.vue')
                     },
                     {
                         path: '/role',
                         name: 'RoleView',
                         meta: {title: '角色管理', hasChildren: false, icon: 'Histogram'},
-                        component: () => import('../views/sys/RoleView.vue')
+                        component: () => import('../views/sys/Role.vue')
                     },
                     {
                         path: '/config',
                         name: 'SystemConfigView',
                         meta: {title: '系统设置', hasChildren: false, icon: 'Tools'},
-                        component: () => import('../views/sys/SystemConfigView.vue')
+                        component: () => import('../views/sys/SystemConfig.vue')
                     },
                 ]
             },
         ]
     },
-    {path: '/console/mysql', name: 'MySQLView', component: () => import('../views/mysql/MySQLView.vue')},
+    {path: '/console/mysql', name: 'MySQLView', component: () => import('../views/mysql/MySQL.vue')},
 ]
 
 const router = createRouter({

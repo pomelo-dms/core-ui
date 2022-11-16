@@ -56,7 +56,7 @@
 
 <script setup>
 import dataSourceApi from "../../utils/api/dataSource.js";
-import DataSourceSaveDrawer from "../../components/dataSource/DataSourceSaveDrawer.vue";
+import DataSourceSaveDrawer from "./SaveDrawer.vue";
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";

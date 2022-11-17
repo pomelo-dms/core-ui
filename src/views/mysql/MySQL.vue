@@ -1,10 +1,10 @@
 <template>
   <Header>
     <ul>
-      <li><a href="#">SQL 控制台</a></li>
-      <li><a href="#">用户权限操作</a></li>
-      <li><a href="#">数据导入与导出</a></li>
-      <li><a href="#">帮助</a></li>
+      <li><span>SQL 控制台</span></li>
+      <li><span>用户权限操作</span></li>
+      <li><span>数据导入与导出</span></li>
+      <li><span>帮助</span></li>
     </ul>
   </Header>
   <div class="mysql-container">
@@ -583,7 +583,7 @@ ul a:hover {
   color: red;
 }
 /* 树形菜单 子节点过长展示滚动条  el-tree-node是个div 块级元素 */
-::v-deep .el-tree > .el-tree-node {
+:deep(.el-tree > .el-tree-node) {
   display: inline-block;
   min-width: 100%;
 }

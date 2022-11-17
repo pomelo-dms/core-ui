@@ -24,7 +24,7 @@
             :data="tableData"
             :row-class-name="tableRowClassName"
             style="width: 100%" border>
-    <el-table-column type="selection" width="50" />
+    <el-table-column type="selection" width="50"/>
     <el-table-column prop="columnName" label="列名称" width="180">
       <template #default="scope">
         <el-input v-model="scope.row.columnName"/>
@@ -32,14 +32,19 @@
     </el-table-column>
     <el-table-column prop="typeInfo" label="数据类型" width="180">
       <template #default="scope">
-        <el-select v-model="scope.row.typeInfo" filterable>
-          <el-option
-              v-for="(item) in dataTypeList"
-              :key="item.dataType"
-              :label="item.dataType"
-              :value="item.dataType"
-          />
-        </el-select>
+        <el-autocomplete
+            v-model="scope.row.typeInfo"
+            :fetch-suggestions="queryTypeInfoList"
+            clearable
+        />
+        <!--        <el-select v-model="scope.row.typeInfo" filterable>-->
+        <!--          <el-option-->
+        <!--              v-for="(item) in dataTypeList"-->
+        <!--              :key="item.dataType"-->
+        <!--              :label="item.dataType"-->
+        <!--              :value="item.dataType"-->
+        <!--          />-->
+        <!--        </el-select>-->
       </template>
     </el-table-column>
     <el-table-column prop="isNull" label="非空" width="60">
@@ -64,12 +69,12 @@
     </el-table-column>
     <el-table-column prop="defaultValue" label="默认值" width="120">
       <template #default="scope">
-        <el-input v-model="scope.row.defaultValue"/>
+        <el-input v-model="scope.row.defaultValue" clearable/>
       </template>
     </el-table-column>
     <el-table-column prop="description" label="描述">
       <template #default="scope">
-        <el-input v-model="scope.row.description"/>
+        <el-input v-model="scope.row.description" clearable/>
       </template>
     </el-table-column>
   </el-table>
@@ -80,34 +85,67 @@
 
 <script setup>
 import {ref} from 'vue'
+import {ElMessage} from "element-plus";
+
+import tableApi from '../../utils/api/table'
 
 const props = defineProps(['nodeKey'])
 const nodeKey = props.nodeKey
 
 const createTableRef = ref(null)
 
-const dataTypeList = ref([
-  {dataType: 'int'},
-  {dataType: 'bigint'},
-  {dataType: 'char()'},
-])
+const queryTypeInfoList = (queryString, cb) => {
+  let result = []
+  if (queryString === '') {
+    cb(result)
+  } else {
+    try {
+      tableApi.listDataInfos()
+          .then(res => {
+            if (res.code === 0) {
+              let originalData = res.data
+              let result = []
+              originalData.forEach(str => {
+                let item = {}
+                item.value = str.toLowerCase()
+                result.push(item)
+              })
+              result = queryString ? result.filter(createFilter(queryString)) : result;
+              //cb是回调函数，返回筛选出的结果数据到输入框下面的输入列表
+              cb(result)
+            }
+          })
+    } catch (e) {
+      ElMessage.error(e)
+    }
+  }
+}
+
+function createFilter(queryString) {
+  return (item) => {
+    return item.value.toUpperCase().startsWith(queryString.toUpperCase())
+  }
+}
 
 const tableData = ref([
   {
-    columnName: 'id',
-    typeInfo: 'int',
-    defaultValue: 0
+    columnName: 'columnName',
+    typeInfo: 'varchar(20)',
   }
 ])
+
 // 添加表格行下标，贼扯淡，ElementX 竟然没有直接获取选中行索引的方法，如果再来一次我必不用 ElementX
 function tableRowClassName({row, rowIndex}) {
   row.row_index = rowIndex
 }
+
 function addRow() {
   tableData.value.unshift({
-    columnName: 'columnName'
+    columnName: 'columnName',
+    typeInfo: 'varchar(20)',
   })
 }
+
 function removeRows() {
   let selectionRows = createTableRef.value.getSelectionRows();
   console.log(selectionRows[0].row_index);

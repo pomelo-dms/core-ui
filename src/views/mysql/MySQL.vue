@@ -1,10 +1,10 @@
 <template>
   <Header>
     <ul>
-      <li><a href="#">SQL 控制台</a></li>
-      <li><a href="#">用户权限操作</a></li>
-      <li><a href="#">数据导入与导出</a></li>
-      <li><a href="#">帮助</a></li>
+      <li><span>SQL 控制台</span></li>
+      <li><span>用户权限操作</span></li>
+      <li><span>数据导入与导出</span></li>
+      <li><span>帮助</span></li>
     </ul>
   </Header>
   <div class="mysql-container">
@@ -77,7 +77,6 @@
             :closable="item.closable"
             v-for="(item, index) in tabDataList">
           <KeepAlive>
-           
             <component :is="item.content"  :nodeKey="currentRightClickNodeKey"></component>
           </KeepAlive>
         </el-tab-pane>
@@ -97,11 +96,10 @@ import rightMenu from "../../utils/mysql/rightClickMenu.js";
 import emitter from '../../utils/bus.js'
 
 
-import MySQLWelcome from './MySQLWelcome.vue'
-import MySQLDataInfo from './MySQLDataInfo.vue'
-import MySQLTableCreateView from './MySQLTableCreateView.vue'
-
-import CreateDatabase from "../../components/mysql/CreateDatabase.vue";
+import Welcome from './Welcome.vue'
+import Info from './Info.vue'
+import TableCreate from './TableCreate.vue'
+import CreateDatabase from "./CreateDatabase.vue";
 
 const route = useRoute()
 // 获取当前数据源 id
@@ -314,7 +312,7 @@ function handleRightClick(value, type) {
       })
           break
         case 'createTable':
-          addTable('创建表', MySQLTableCreateView)
+          addTable('创建表', TableCreate)
           break
         case 'createView':
           ElMessage.warning(`【${value}】功能未实现`)
@@ -335,7 +333,7 @@ function handleRightClick(value, type) {
           ElMessage.warning(`【${value}】功能未实现`)
           break
         case 'databaseInfo':
-          addTable('对象信息', MySQLDataInfo)
+          addTable('对象信息', Info)
           emitter.emit('currentDatabaseName', currentDatabaseName)
           break
       }
@@ -343,7 +341,7 @@ function handleRightClick(value, type) {
     case 2:  // 表目录操作
       switch (value) {
         case 'createTable':
-          addTable('创建表', MySQLTableCreateView)
+          addTable('创建表', TableCreate)
           break
         case 'refreshTable':
           ElMessage.warning(`${value} 功能未实现`)
@@ -464,7 +462,7 @@ const tabIndex = ref(1)  // 用于构造 tab 页名称的,没实际意义
 const tabDataList = ref([{
   label: '首页',
   name: '1',
-  content: markRaw(MySQLWelcome),
+  content: markRaw(Welcome),
   closable: false
 }])
 
@@ -585,7 +583,7 @@ ul a:hover {
   color: red;
 }
 /* 树形菜单 子节点过长展示滚动条  el-tree-node是个div 块级元素 */
-::v-deep .el-tree > .el-tree-node {
+:deep(.el-tree > .el-tree-node) {
   display: inline-block;
   min-width: 100%;
 }
